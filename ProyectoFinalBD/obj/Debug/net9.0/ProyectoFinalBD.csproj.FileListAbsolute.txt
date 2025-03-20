@@ -64,3 +64,4 @@
 /home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/obj/Debug/net9.0/Proyecto.42C6F11E.Up2Date
 /home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/obj/Debug/net9.0/ProyectoFinalBD.genruntimeconfig.cache
 /home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/obj/Debug/net9.0/ref/ProyectoFinalBD.dll
+/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/obj/Debug/net9.0/ProyectoFinalBD.sourcelink.json
