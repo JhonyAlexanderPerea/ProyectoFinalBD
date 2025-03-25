@@ -24,5 +24,8 @@ build_property.EnableCodeStyleSeverity =
 [/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/MainWindow.axaml]
+[/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/View/Login.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/View/MenuPrincipal.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

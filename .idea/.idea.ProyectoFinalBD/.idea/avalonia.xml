@@ -3,7 +3,9 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="ProyectoFinalBD/App.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/MainWindow.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
+        <entry key="ProyectoFinalBD/View/Login.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
       </map>
     </option>
   </component>

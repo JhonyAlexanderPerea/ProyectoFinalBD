@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ProyectoFinalBD.MenuPrincipal"
+        Background="White"
+        Title="Menu principal">
+        <Panel Background="Blue">
+                <DockPanel VerticalAlignment="Top" Background="Navy">
+                        <Button Content="Entidades" Click="OpenViewEntidades" Background="Aquamarine" Margin="10" CornerRadius="10"/>
+                        <Button Content="Transacciones" Click="OpenViewTransacciones" Background="Aquamarine"  Margin="10" CornerRadius="10"/>
+                        <Button Content="Reportes/Consultas" Click="OpernViewReportes" Background="Aquamarine"  Margin="10" CornerRadius="10"/>
+                        <Button Content="Utilidades" Click="OpenViewUtilidades" Background="Aquamarine"  Margin="10" CornerRadius="10"/>
+                        <Button Content="Ayudas" Click="OpenViewAyudas" Background="Aquamarine" Margin="10" CornerRadius="10"/>
+                        <Button Content="Cerrar sesión" Click="OpenViewLogin" Background="Aquamarine"  HorizontalAlignment="Right" CornerRadius="10"/>
+                </DockPanel>
+        </Panel>
+</Window>
