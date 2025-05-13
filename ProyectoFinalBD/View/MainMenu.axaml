@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ProyectoFinalBD.MainMenu"
+        Width="800"
+        Height="500"
+        Title="Menú Principal"
+        Background="White">
+
+    <DockPanel>
+
+        <!-- Menú superior -->
+        <Border Background="Ivory" DockPanel.Dock="Top" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10" Grid.Column="0">
+                    <Button Content="Entidades" Click="OpenViewEntidades" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                    <Button Content="Transacciones" Click="OpenViewTransacciones" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                    <Button Content="Reportes/Consultas" Click="OpenViewReportes" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                    <Button Content="Utilidades" Click="OpenViewUtilidades" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                    <Button Content="Ayudas" Click="OpenViewAyudas" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                </StackPanel>
+
+                <Button Content="Cerrar sesión"
+                        Click="OpenViewLogin"
+                        Background="Crimson"
+                        Foreground="White"
+                        CornerRadius="8"
+                        Margin="10,0,0,0"
+                        Width="120"
+                        HorizontalAlignment="Right"
+                        Grid.Column="1"/>
+            </Grid>
+        </Border>
+
+        <!-- Área donde se cargan las páginas -->
+        <ContentControl Name="ContentArea" Background="#F0F0F0" />
+        
+    </DockPanel>
+</Window>

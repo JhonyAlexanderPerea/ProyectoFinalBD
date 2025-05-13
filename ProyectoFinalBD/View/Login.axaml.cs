@@ -15,14 +15,14 @@ public partial class Login : Window
         InitializeComponent();
     }
     
-    private void OpenMenuPrincipal(object? sender, RoutedEventArgs e)
+    private void OpenMain(object? sender, RoutedEventArgs e)
     {
         string userName = Username.Text;
         string password = Password.Text;
         if (validarLogin(userName, password))
         {
-            MenuPrincipal menuPrincipal = new MenuPrincipal();
-            menuPrincipal.Show();
+            MainMenu mainMenu = new MainMenu();
+            mainMenu.Show();
             this.Close();
         }
         else
@@ -32,14 +32,20 @@ public partial class Login : Window
     }
     private bool validarLogin(String userName, String password)
     {
-        UserDAO userDao = new UserDAO();
+       
        //TOO
        return true;
     }
 
-    private void Salir(object? sender, RoutedEventArgs e)
+    private void Exit(object? sender, RoutedEventArgs e)
     {
         System.Environment.Exit(0);
     }
-    
+
+    private void OpenRegisterView(object? sender, RoutedEventArgs e)
+    {
+        Register register = new Register();
+        register.Show();
+        this.Close();
+    }
 }

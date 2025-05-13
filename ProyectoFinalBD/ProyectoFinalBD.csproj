@@ -21,12 +21,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Model\" />
+      <Folder Include="Utils\" />
       <Folder Include="ViewModel\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="View\MenuPrincipal.axaml.cs">
+      <Compile Update="View\MainMenu.axaml.cs">
         <DependentUpon>MainWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

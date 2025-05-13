@@ -1,0 +1,32 @@
+﻿
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ProyectoFinalBD.View.Welcome">
+    
+    <Grid>
+        <Border Background="White" 
+                CornerRadius="15" 
+                Padding="20" 
+                Margin="20"
+                BoxShadow="0 2 10 0 #15000000">
+            <StackPanel HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" 
+                        Spacing="20">
+                <TextBlock Text="¡Bienvenido al Sistema!" 
+                           FontSize="32" 
+                           FontWeight="Bold"
+                           Foreground="Black"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Seleccione una opción del menú superior para comenzar"
+                           FontSize="18"
+                           Foreground="Gray"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+    
+</UserControl>

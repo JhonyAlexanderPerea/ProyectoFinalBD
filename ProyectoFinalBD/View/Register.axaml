@@ -1,0 +1,68 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="ProyectoFinalBD.View.Register"
+        Width="600"
+        Height="400"
+        Title="Register"
+        Background="#F2F2F2">
+
+    <Grid>
+        <Border Background="White" CornerRadius="25" Padding="30" Width="350" HorizontalAlignment="Center" VerticalAlignment="Center" >
+            <StackPanel Spacing="20">
+                <TextBlock Text="Register"  Foreground="Black"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+
+                <TextBox Name="Name"
+                         Width="250"
+                         CornerRadius="10"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         HorizontalAlignment="Center"
+                         Watermark="User" />
+                
+                <TextBox Name="Id"
+                         Width="250"
+                         CornerRadius="10"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         HorizontalAlignment="Center"
+                         Watermark="Id" />
+                
+                <TextBox Name="Password"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         Width="250"
+                         CornerRadius="10"
+                         HorizontalAlignment="Center"
+                         PasswordChar="●"
+                         Watermark="Password" />
+                
+                <TextBox Name="NumberPhone"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         Width="250"
+                         CornerRadius="10"
+                         HorizontalAlignment="Center"
+                         Watermark="Number" />
+
+                <Button Content="Sign Up"
+                        Click="RegisterUser"
+                        CornerRadius="10"
+                        Background="Green"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        Width="150"/>
+
+                <Button Content="Back"
+                        CornerRadius="10"
+                        Click="Exit"
+                        Background="#CC0004"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        Width="150"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
