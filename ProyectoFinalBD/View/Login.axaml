@@ -2,17 +2,75 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
         x:Class="ProyectoFinalBD.View.Login"
-        Width="600" 
+        Width="600"
         Height="400"
         Title="Login"
-        Background="White">
-    
-    <StackPanel HorizontalAlignment="Center"  VerticalAlignment="Center" Spacing="25">
-        <TextBox Name="Username" Width="250"/>
-        <TextBox PasswordChar="●" Name="Password" Width="250"/>
-        <Button Content="Iniciar sesión" Click="OpenMenuPrincipal" HorizontalAlignment="Center" Background="Chartreuse"/>
-        <Button Content="Salir" Click="Salir" HorizontalAlignment="Center" Background="Red"/>
-    </StackPanel>
-</Window>   
+        Background="#F2F2F2">
+
+    <Grid>
+        <Border Background="White" CornerRadius="25" Padding="30" Width="350" HorizontalAlignment="Center" VerticalAlignment="Center" >
+            <StackPanel Spacing="20">
+                <TextBlock Text="Sign In"  Foreground="Black"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+                
+                <TextBox Name="Username"
+                         Width="250"
+                         CornerRadius="10"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         HorizontalAlignment="Center"
+                         Watermark="User" />
+
+                <TextBox Name="Password"
+                         Foreground="Black"
+                         Background="AliceBlue"
+                         Width="250"
+                         CornerRadius="10"
+                         HorizontalAlignment="Center"
+                         PasswordChar="●"
+                         Watermark="Password" />
+
+                <Button Content="Sign In"
+                        Click="OpenMain"
+                        CornerRadius="10"
+                        Background="Green"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Height="30"
+                        Width="250"/>
+                <Grid >
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition Width="*" />
+                        
+                        <ColumnDefinition Width="Auto"  />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10" Grid.Column="0">
+                        <Button Content="Exit"
+                                CornerRadius="10"
+                                Click="Exit"
+                                Background="#CC0004"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                Width="150"/>
+                        <Button Content="Sign Up"
+                                CornerRadius="10"
+                                Click="OpenRegisterView"
+                                Background="CornflowerBlue"
+                                HorizontalContentAlignment="Center"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                Width="150"/>
+                       
+                    </StackPanel>
+                    
+                </Grid> 
+
+                
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

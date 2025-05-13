@@ -1,0 +1,45 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ProyectoFinalBD.View.Entities"
+        Title="Gestión de Entidades">
+    <DockPanel>
+        <TabControl>
+            <TabItem Header="Clientes">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="ClientesGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Productos">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="ProductosGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Empleados">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="EmpleadosGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

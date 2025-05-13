@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj": {}
+    "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj": {}
   },
   "projects": {
-    "/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj": {
+    "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj",
+        "projectUniqueName": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj",
         "projectName": "ProyectoFinalBD",
-        "projectPath": "/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj",
-        "packagesPath": "/home/jhony/.nuget/packages/",
-        "outputPath": "/home/jhony/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/obj/",
+        "projectPath": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj",
+        "packagesPath": "C:\\Users\\santi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/jhony/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\santi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -36,9 +36,9 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -81,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/jhony/.dotnet/sdk/9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\santi\\.dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
