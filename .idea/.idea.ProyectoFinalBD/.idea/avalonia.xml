@@ -5,8 +5,11 @@
       <map>
         <entry key="ProyectoFinalBD/App.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/MainWindow.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
+        <entry key="ProyectoFinalBD/View/Calculator.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
+        <entry key="ProyectoFinalBD/View/Calendar.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/View/Entities.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/View/Login.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
+        <entry key="ProyectoFinalBD/View/MainMenu.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/View/MenuPrincipal.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/View/Register.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />
         <entry key="ProyectoFinalBD/View/Welcome.axaml" value="ProyectoFinalBD/ProyectoFinalBD.csproj" />

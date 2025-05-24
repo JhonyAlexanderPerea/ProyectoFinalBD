@@ -24,6 +24,12 @@ build_property.EnableCodeStyleSeverity =
 [C:/Users/santi/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/santi/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/View/Calculator.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/santi/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/View/Calendar.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/santi/RiderProjects/ProyectoFinalBD/ProyectoFinalBD/View/Entities.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
