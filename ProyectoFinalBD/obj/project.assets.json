@@ -1426,7 +1426,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\santi\\.nuget\\packages\\": {}
+    "C:\\Users\\santi\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -1437,8 +1438,12 @@
       "packagesPath": "C:\\Users\\santi\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\santi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\santi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
