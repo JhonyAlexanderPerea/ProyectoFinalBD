@@ -4,13 +4,16 @@ using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
+using ProyectoFinalBD.util;
 using ReactiveUI;
+
 
 
 namespace ProyectoFinalBD.View;
 
 public partial class Login : Window
 {
+    private Message _message = new Message();
     private readonly UserController _userController;
 
     public Login()
@@ -26,7 +29,7 @@ public partial class Login : Window
 
         if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
         {
-            await ShowError("Por favor ingrese usuario y contraseña");
+            await ShowError("Error","Por favor ingrese usuario y contraseña");
             return;
         }
 
@@ -38,7 +41,7 @@ public partial class Login : Window
         }
         else
         {
-            await ShowError("Usuario o contraseña incorrectos");
+            await ShowError("Error","Usuario o contraseña incorrectos");
         }
     }
 
@@ -51,46 +54,20 @@ public partial class Login : Window
         }
         catch (Exception ex)
         {
-            await ShowError($"Error al intentar iniciar sesión: {ex.Message}");
+            await ShowError("Error",$"Error al intentar iniciar sesión: {ex.Message}");
             return false;
         }
     }
 
-private async Task ShowError(string message)
-{
-    Window dialog = new Window();
-    var okButton = new Button
+    private async Task ShowError(string title, string msg)
     {
-        Content = "OK",
-        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-    };
-    okButton.Click += (_, _) => dialog.Close();
-    
-    dialog.Title = "Error";
-    dialog.Width = 300;
-    dialog.Height = 150;
-    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-    dialog.Content = new StackPanel
-    {
-        Margin = new Thickness(20),
-        Spacing = 20,
-        Children =
-        {
-            new TextBlock
-            {
-                Text = message,
-                TextWrapping = TextWrapping.Wrap,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-            },
-            okButton
-        }
-    };
+        await _message.ShowMessage(this, title, msg);
+    }
 
-    await dialog.ShowDialog(this);
-}
 
     private void Exit(object? sender, RoutedEventArgs e)
     {
+        _userController.Logout();
         System.Environment.Exit(0);
     }
 

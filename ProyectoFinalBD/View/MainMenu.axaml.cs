@@ -10,8 +10,10 @@ namespace ProyectoFinalBD
 {
     public partial class MainMenu : Window
     {
+        private UserController userController;
         public MainMenu()
         {
+            userController = new UserController();
             InitializeComponent();
 
             // Cargar vista inicial por defecto
@@ -135,6 +137,7 @@ namespace ProyectoFinalBD
 
         private void OpenViewLogin(object? sender, RoutedEventArgs e)
         {
+            userController.Logout(); // Desloguea el usuario
             var loginWindow = new Login(); // Tu ventana de login
             loginWindow.Show();
             this.Close(); // Cierra este MainMenu
