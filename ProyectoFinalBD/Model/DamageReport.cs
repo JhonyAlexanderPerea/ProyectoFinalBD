@@ -5,11 +5,11 @@ namespace ProyectoFinalBD.Model;
 
 public class DamageReport
 {
-    public int DamageReportId { get; set; } // id_dano
-    public int EquipmentId { get; set; } // FK
+    public string DamageReportId { get; set; }
+    public DateTime Date { get; set; }
+    public string Cause { get; set; }
+    public string? Description { get; set; }
 
-    public string Description { get; set; } // descripcion
-    public DateTime ReportDate { get; set; } // fecha
-
-    public Equipment Equipment { get; set; } // navegación opcional
+    public string? EquipmentId { get; set; }
+    public Equipment? Equipment { get; set; }
 }

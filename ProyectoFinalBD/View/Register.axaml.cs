@@ -10,6 +10,7 @@ public partial class Register : Window
     public Register()
     {
         InitializeComponent();
+        
     }
 
     private void Exit(object? sender, RoutedEventArgs e)

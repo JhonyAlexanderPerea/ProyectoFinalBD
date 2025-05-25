@@ -2,8 +2,12 @@
 
 public class Supplier
 {
-    public int SupplierId { get; set; }
+    public string SupplierId { get; set; }
     public string Name { get; set; }
     public string Contact { get; set; }
-    public string WarrantyYears { get; set; }
+    public string? Email { get; set; }
+    public int WarrantyMonths { get; set; }
+
+    public string? MunicipalityId { get; set; }
+    public Municipality? Municipality { get; set; }
 }

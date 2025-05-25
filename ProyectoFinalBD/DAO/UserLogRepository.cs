@@ -1,0 +1,133 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
+using ProyectoFinalBD.Model;
+
+namespace ProyectoFinalBD.DAO
+{
+    public class UserLogRepository
+    {
+        private readonly string _connectionString;
+
+        public UserLogRepository()
+        {
+            _connectionString = DbConnectionFactory.GetConnectionString();
+        }
+
+        public async Task<List<UserLog>> GetAll()
+        {
+            var logs = new List<UserLog>();
+            using var connection = new OracleConnection(_connectionString);
+            const string query = @"
+                SELECT l.*, u.nombreUsuario as user_name
+                FROM RegistroUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario";
+
+            using var command = new OracleCommand(query, connection);
+            await connection.OpenAsync();
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                logs.Add(MapUserLogFromReader(reader));
+            }
+
+            return logs;
+        }
+
+        public async Task<UserLog> GetById(string userLogId)
+        {
+            using var connection = new OracleConnection(_connectionString);
+            const string query = @"
+                SELECT l.*, u.nombreUsuario as user_name
+                FROM RegistroUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
+                WHERE l.codigoRegistro = :userLogId";
+
+            using var command = new OracleCommand(query, connection);
+            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLogId;
+
+            await connection.OpenAsync();
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return MapUserLogFromReader(reader);
+            }
+
+            return null;
+        }
+
+        public async Task Create(UserLog userLog)
+        {
+            using var connection = new OracleConnection(_connectionString);
+            const string query = @"
+                INSERT INTO RegistroUsuario 
+                (codigoRegistro, fecha, entrada, usuario) 
+                VALUES 
+                (:userLogId, :date, :entry, :userId)";
+
+            using var command = new OracleCommand(query, connection);
+            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
+            command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
+            command.Parameters.Add("entry", OracleDbType.Varchar2).Value = userLog.Entry;
+            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = 
+                userLog.UserId ?? (object)DBNull.Value;
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task Delete(string userLogId)
+        {
+            using var connection = new OracleConnection(_connectionString);
+            const string query = "DELETE FROM RegistroUsuario WHERE codigoRegistro = :userLogId";
+
+            using var command = new OracleCommand(query, connection);
+            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLogId;
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task<List<UserLog>> GetByUser(string userId)
+        {
+            var logs = new List<UserLog>();
+            using var connection = new OracleConnection(_connectionString);
+            const string query = @"
+                SELECT l.*, u.nombreUsuario as user_name
+                FROM RegistroUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
+                WHERE l.usuario = :userId";
+
+            using var command = new OracleCommand(query, connection);
+            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
+
+            await connection.OpenAsync();
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                logs.Add(MapUserLogFromReader(reader));
+            }
+
+            return logs;
+        }
+
+        private static UserLog MapUserLogFromReader(System.Data.IDataReader reader)
+        {
+            return new UserLog
+            {
+                UserLogId = reader["codigoRegistro"].ToString()!,
+                Date = Convert.ToDateTime(reader["fecha"]),
+                Entry = reader["entrada"].ToString()!,
+                UserId = reader["usuario"]?.ToString(),
+                User = reader["usuario"] != DBNull.Value ? new User 
+                { 
+                    Name = reader["user_name"].ToString()! 
+                } : null
+            };
+        }
+    }
+}

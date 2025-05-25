@@ -1,13 +1,14 @@
-﻿using ProyectoFinalBD.Enums;
-
-namespace ProyectoFinalBD.Model;
+﻿namespace ProyectoFinalBD.Model;
 
 public class User
 {
-    public int UserId { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public UserType UserType { get; set; }
-    public string Password { get; set; }
+    public string UserId { get; set; } = string.Empty; // codigoUser
+    public string? Cedula { get; set; }               // cedulaUser
+    public string Name { get; set; } = string.Empty;  // nombreUser
+    public string Email { get; set; } = string.Empty; // correoUser
+    public string Password { get; set; } = string.Empty; // contrasenaUser
+    public string? UserRoleId { get; set; }           // rolUsuario
+    public UserRole? UserRole { get; set; }           // Objeto de navegación
+    public string? MunicipalityId { get; set; }       // municipio
+    public Municipality? Municipality { get; set; }    // Objeto de navegación
 }
-

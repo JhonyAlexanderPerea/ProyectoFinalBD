@@ -1,130 +1,168 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
+using Oracle.ManagedDataAccess.Client;
 using System.Data;
-using System.Data.SqlClient;
-
+using System.Threading.Tasks;
+using ProyectoFinalBD.Model;
+using ProyectoFinalBD.DAO;
 
 namespace ProyectoFinalBD.DAO;
 
- public class UserRepository
+public class UserRepository
+{
+    private readonly string _connectionString;
+
+    public UserRepository()
     {
-        private readonly string _connectionString;
+        _connectionString = DbConnectionFactory.GetConnectionString();
+    }
 
-        public UserRepository()
+    public async Task CreateUser(User user)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = @"
+            INSERT INTO Usuario 
+            (codigoUser, cedulaUser, nombreUser, correoUser, contrasenaUser, rolUsuario, municipio) 
+            VALUES 
+            (:codigoUser, :cedulaUser, :nombreUser, :correoUser, :contrasenaUser, :rolUsuario, :municipio)";
+
+        using var command = new OracleCommand(query, connection);
+
+        command.Parameters.Add("codigoUser", OracleDbType.Varchar2).Value = user.UserId;
+        command.Parameters.Add("cedulaUser", OracleDbType.Varchar2).Value = user.Cedula;
+        command.Parameters.Add("nombreUser", OracleDbType.Varchar2).Value = user.Name;
+        command.Parameters.Add("correoUser", OracleDbType.Varchar2).Value = user.Email;
+        command.Parameters.Add("contrasenaUser", OracleDbType.Varchar2).Value = user.Password;
+        command.Parameters.Add("rolUsuario", OracleDbType.Varchar2).Value =
+            user.UserRoleId ?? (object)DBNull.Value;
+        command.Parameters.Add("municipio", OracleDbType.Varchar2).Value =
+            user.MunicipalityId ?? (object)DBNull.Value;
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<User?> GetUserById(string userId)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = @"
+            SELECT u.*, r.nombreRolUsuario, m.nombreMunicipio
+            FROM Usuario u
+            LEFT JOIN RolUsuario r ON u.rolUsuario = r.codigoRolUsuario
+            LEFT JOIN Municipio m ON u.municipio = m.codigoMunicipio
+            WHERE u.codigoUser = :userId";
+
+        using var command = new OracleCommand(query, connection);
+        command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            return null;
+
+        return MapUserFromReader(reader);
+    }
+
+    public async Task<List<User>> GetAllUsers()
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = @"
+            SELECT u.*, r.nombreRolUsuario, m.nombreMunicipio
+            FROM Usuario u
+            LEFT JOIN RolUsuario r ON u.rolUsuario = r.codigoRolUsuario
+            LEFT JOIN Municipio m ON u.municipio = m.codigoMunicipio";
+
+        using var command = new OracleCommand(query, connection);
+        var users = new List<User>();
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
         {
-            _connectionString = DbConnectionFactory.GetConnectionString();
+            users.Add(MapUserFromReader(reader));
         }
 
-        public void AddUser(User user)
-        {
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                string query = "INSERT INTO Usuarios (nombre, correo, tipo_usuario, contraseña) VALUES (@nombre, @correo, @tipo_usuario, @contraseña)";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@nombre", user.Name);
-                    cmd.Parameters.AddWithValue("@correo", user.Email);
-                    cmd.Parameters.AddWithValue("@tipo_usuario", user.UserType);
-                    cmd.Parameters.AddWithValue("@contraseña", user.Password);
+        return users;
+    }
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
+    public async Task Update(User user)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = @"
+            UPDATE Usuario 
+            SET cedulaUser = :cedulaUser,
+                nombreUser = :nombreUser, 
+                correoUser = :correoUser, 
+                contrasenaUser = :contrasenaUser,
+                rolUsuario = :rolUsuario,
+                municipio = :municipio
+            WHERE codigoUser = :codigoUser";
+
+        using var command = new OracleCommand(query, connection);
+        command.Parameters.Add("cedulaUser", OracleDbType.Varchar2).Value = user.Cedula;
+        command.Parameters.Add("nombreUser", OracleDbType.Varchar2).Value = user.Name;
+        command.Parameters.Add("correoUser", OracleDbType.Varchar2).Value = user.Email;
+        command.Parameters.Add("contrasenaUser", OracleDbType.Varchar2).Value = user.Password;
+        command.Parameters.Add("rolUsuario", OracleDbType.Varchar2).Value =
+            user.UserRoleId ?? (object)DBNull.Value;
+        command.Parameters.Add("municipio", OracleDbType.Varchar2).Value =
+            user.MunicipalityId ?? (object)DBNull.Value;
+        command.Parameters.Add("codigoUser", OracleDbType.Varchar2).Value = user.UserId;
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task Delete(string userId)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = "DELETE FROM Usuario WHERE codigoUser = :userId";
+
+        using var command = new OracleCommand(query, connection);
+        command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userId;
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private static User MapUserFromReader(IDataReader reader)
+    {
+        return new User
+        {
+            UserId = reader["codigoUser"].ToString()!,
+            Cedula = reader["cedulaUser"].ToString(),
+            Name = reader["nombreUser"].ToString()!,
+            Email = reader["correoUser"].ToString()!,
+            Password = reader["contrasenaUser"].ToString()!,
+            UserRoleId = reader["rolUsuario"].ToString(),
+            MunicipalityId = reader["municipio"].ToString()
+        };
+    }
+
+    public async Task<User> ValidateLogin(string email, string password)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        const string query = @"
+        SELECT u.*, r.nombreRolUsuario AS role_name 
+        FROM Usuario u
+        LEFT JOIN RolUsuario r ON u.rolUsuario = r.codigoRolUsuario
+        WHERE u.correoUser = :email 
+        AND u.contrasenaUser = :password";
+
+        using var command = new OracleCommand(query, connection);
+        command.Parameters.Add("email", OracleDbType.Varchar2).Value = email;
+        command.Parameters.Add("password", OracleDbType.Varchar2).Value = password;
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return MapUserFromReader(reader);
         }
 
-        public List<User> GetAllUsers()
-        {
-            var users = new List<User>();
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                string query = "SELECT * FROM Usuarios";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            users.Add(new User
-                            {
-                                UserId = (int)reader["id_usuario"],
-                                Name = reader["nombre"].ToString(),
-                                Email = reader["correo"].ToString(),
-                                UserType = reader["tipo_usuario"].ToString(),
-                                Password = reader["contraseña"].ToString()
-                            });
-                        }
-                    }
-                }
-            }
-
-            return users;
-        }
-
-        public User GetUserById(int id)
-        {
-            User user = null;
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                string query = "SELECT * FROM Usuarios WHERE id_usuario = @id";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    conn.Open();
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            user = new User
-                            {
-                                UserId = (int)reader["id_usuario"],
-                                Name = reader["nombre"].ToString(),
-                                Email = reader["correo"].ToString(),
-                                UserType = reader["tipo_usuario"].ToString(),
-                                Password = reader["contraseña"].ToString()
-                            };
-                        }
-                    }
-                }
-            }
-
-            return user;
-        }
-
-        public void UpdateUser(User user)
-        {
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                string query = "UPDATE Usuarios SET nombre = @nombre, correo = @correo, tipo_usuario = @tipo_usuario, contraseña = @contraseña WHERE id_usuario = @id";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@nombre", user.Name);
-                    cmd.Parameters.AddWithValue("@correo", user.Email);
-                    cmd.Parameters.AddWithValue("@tipo_usuario", user.UserType);
-                    cmd.Parameters.AddWithValue("@contraseña", user.Password);
-                    cmd.Parameters.AddWithValue("@id", user.UserId);
-
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public void DeleteUser(int id)
-        {
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                string query = "DELETE FROM Usuarios WHERE id_usuario = @id";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-    }*/
+        return null;
+    }
+}

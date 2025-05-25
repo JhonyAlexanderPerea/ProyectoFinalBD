@@ -4,12 +4,14 @@ namespace ProyectoFinalBD.Model;
 
 public class Loan
 {
-    public int LoanId { get; set; } 
-    public int UserId { get; set; }
-    public int EquipmentId { get; set; }
-    public DateTime DeliveryDate { get; set; } 
-    public DateTime? ReturnDate { get; set; } 
-    public string LoanStatus { get; set; } 
-    /*public User User { get; set; }
-    public Equipment Equipment { get; set; } */
+    public string LoanId { get; set; }
+    public DateTime Date { get; set; }
+    public DateTime DueDate { get; set; }
+    public decimal PenaltyCost { get; set; }
+
+    public string? EquipmentId { get; set; }
+    public Equipment? Equipment { get; set; }
+
+    public string? UserId { get; set; }
+    public User? User { get; set; }
 }

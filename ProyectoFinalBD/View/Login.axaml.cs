@@ -1,25 +1,36 @@
 using System;
-using System.Runtime.InteropServices.JavaScript;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using ProyectoFinalBD.DAO;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Media;
+using ReactiveUI;
+
 
 namespace ProyectoFinalBD.View;
 
 public partial class Login : Window
 {
+    private readonly UserController _userController;
+
     public Login()
     {
         InitializeComponent();
+        _userController = new UserController();
     }
     
-    private void OpenMain(object? sender, RoutedEventArgs e)
+    private async void OpenMain(object? sender, RoutedEventArgs e)
     {
         string userName = Username.Text;
         string password = Password.Text;
-        if (validarLogin(userName, password))
+
+        if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+        {
+            await ShowError("Por favor ingrese usuario y contraseña");
+            return;
+        }
+
+        if (await validarLogin(userName, password))
         {
             MainMenu mainMenu = new MainMenu();
             mainMenu.Show();
@@ -27,15 +38,56 @@ public partial class Login : Window
         }
         else
         {
-            Console.WriteLine("Nombre de usuario o contraseña incorrectas");
+            await ShowError("Usuario o contraseña incorrectos");
         }
     }
-    private bool validarLogin(String userName, String password)
+
+    private async Task<bool> validarLogin(string email, string password)
     {
-       
-       //TOO
-       return true;
+        try
+        {
+            
+            return await _userController.Login(email, password);
+        }
+        catch (Exception ex)
+        {
+            await ShowError($"Error al intentar iniciar sesión: {ex.Message}");
+            return false;
+        }
     }
+
+private async Task ShowError(string message)
+{
+    Window dialog = new Window();
+    var okButton = new Button
+    {
+        Content = "OK",
+        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+    };
+    okButton.Click += (_, _) => dialog.Close();
+    
+    dialog.Title = "Error";
+    dialog.Width = 300;
+    dialog.Height = 150;
+    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+    dialog.Content = new StackPanel
+    {
+        Margin = new Thickness(20),
+        Spacing = 20,
+        Children =
+        {
+            new TextBlock
+            {
+                Text = message,
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+            },
+            okButton
+        }
+    };
+
+    await dialog.ShowDialog(this);
+}
 
     private void Exit(object? sender, RoutedEventArgs e)
     {

@@ -2,12 +2,20 @@
 
 public class Equipment
 {
-    public int EquipmentId { get; set; }
+    public string EquipmentId { get; set; }
     public string Name { get; set; }
-    public string Type { get; set; } 
-    public string Status { get; set; } 
-    public string Location { get; set; } 
+    public decimal Cost { get; set; }
+    public string Features { get; set; }
 
-    public int SupplierId { get; set; } 
-    public Supplier Supplier { get; set; } 
+    public string? EquipmentTypeId { get; set; }
+    public EquipmentType? EquipmentType { get; set; }
+
+    public string? LocationId { get; set; }
+    public Location? Location { get; set; }
+
+    public string? EquipmentStatusId { get; set; }
+    public EquipmentStatus? EquipmentStatus { get; set; }
+
+    public string? SupplierId { get; set; }
+    public Supplier? Supplier { get; set; }
 }
