@@ -20,7 +20,7 @@
                          Foreground="Black"
                          Background="AliceBlue"
                          HorizontalAlignment="Center"
-                         Watermark="User" />
+                         Watermark="Email" />
 
                 <TextBox Name="Password"
                          Foreground="Black"
