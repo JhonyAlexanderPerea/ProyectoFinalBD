@@ -55,34 +55,48 @@ namespace ProyectoFinalBD.View
         _mantenimientos = new ObservableCollection<Maintenance>();
         DataContext = this;
 
-        // Asegurarse de que la carga inicial se realice después de que el control esté listo
-        this.Loaded += async (s, e) => await CargarDatos();
+        // Probar una asignación inicial
+        Console.WriteLine("DataContext asignado.");
+
+        // Registrar evento de Loaded
+        this.Loaded += async (s, e) =>
+        {
+            Console.WriteLine("Control cargado, iniciando carga de datos...");
+            await CargarDatos();
+
+            // Comprobar luego de la carga
+            Console.WriteLine($"Total de mantenimientos después de cargar: {Mantenimientos.Count}");
+        };
     }
 
     private async Task CargarDatos()
     {
         try
         {
-            // Usar Dispatcher para asegurar que las actualizaciones de UI se realicen en el hilo correcto
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                var mantenimientos = await _controller.ObtenerMantenimientos();
-                
-                // Limpiar la colección existente
-                Mantenimientos.Clear();
-                
-                // Agregar los nuevos items uno por uno
-                foreach (var mantenimiento in mantenimientos)
-                {
-                    Mantenimientos.Add(mantenimiento);
-                }
+            Console.WriteLine("Iniciando carga de mantenimientos...");
 
-                // Debug: Verificar que los datos se han cargado
-                Console.WriteLine($"Datos cargados en UI: {Mantenimientos.Count} registros");
-            });
+            // Obtiene los datos del controlador
+            var mantenimientos = await _controller.ObtenerMantenimientos();
+
+            if (mantenimientos == null || mantenimientos.Count == 0)
+            {
+                Console.WriteLine("No se cargaron registros desde la base de datos.");
+                return;
+            }
+
+            // Limpia y añade elementos directamente al ObservableCollection
+            Mantenimientos.Clear();
+            foreach (var mantenimiento in mantenimientos)
+            {
+                Mantenimientos.Add(mantenimiento);
+            }
+
+            // Mensaje de depuración
+            Console.WriteLine($"Datos cargados correctamente: {Mantenimientos.Count} registros.");
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Error durante la carga de datos: {ex.Message}");
             await ShowError("Error al cargar datos", ex.Message);
         }
     }
@@ -151,13 +165,7 @@ private async void OnNewMaintenance(object sender, RoutedEventArgs e)
             }
         }
 
-        private void OnMaintenanceSelected(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is DataGrid grid && grid.SelectedItem is Maintenance maintenance)
-            {
-                SelectedMaintenance = maintenance;
-            }
-        }
+        
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -214,6 +222,7 @@ private async void OnNewMaintenance(object sender, RoutedEventArgs e)
         }
 
         
-    }
+       
+}
   
 }

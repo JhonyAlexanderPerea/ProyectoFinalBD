@@ -52,8 +52,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged
         InitializeComponent();
         DataContext = this;
         
-        // Inicializar la colección
-        Mantenimientos = new ObservableCollection<Maintenance>();
         
         // Carga inicial
         Loaded += async (s, e) => await CargarMantenimientosAsync();
@@ -119,40 +117,34 @@ private async Task CargarMantenimientosAsync()
         var controller = new MaintenanceController();
         var lista = await controller.ObtenerMantenimientos();
         
-        // Crear una nueva instancia de ObservableCollection
-        var nuevaColeccion = new ObservableCollection<Maintenance>();
-        
-        // Agregar los elementos a la nueva colección
-        foreach (var item in lista)
+        if (lista == null || lista.Count == 0)
         {
-            nuevaColeccion.Add(item);
+            Console.WriteLine("No se recuperaron datos de la base de datos.");
         }
-        
-        // Asignar la nueva colección en el hilo de UI
+        else
+        {
+            Console.WriteLine($"Datos recuperados: {lista.Count} registros");
+            foreach (var item in lista)
+            {
+                Console.WriteLine($"ID: {item.MaintenanceId}, Fecha: {item.Date}, Costo: {item.Cost}");
+            }
+        }
+
+        // Crear y asignar ObservableCollection
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Mantenimientos = nuevaColeccion;
-            
-            // Forzar la actualización del DataGrid
-            var grid = this.FindControl<DataGrid>("MantenimientoGrid");
-            if (grid != null)
-            {
-                grid.DataContext = Mantenimientos;
-            }
-            
-            // Notificar el cambio
-            OnPropertyChanged(nameof(Mantenimientos));
+            Mantenimientos = new ObservableCollection<Maintenance>(lista);
         });
-        
-        Console.WriteLine($"Se asignaron {Mantenimientos.Count} registros al DataGrid");
+
+        Console.WriteLine($"Se asignaron {Mantenimientos.Count} registros al ObservableCollection.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error al cargar mantenimientos: {ex}");
+        Console.WriteLine($"Error al cargar mantenimientos: {ex.Message}");
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             var msg = MessageBoxManager.GetMessageBoxStandardWindow(
-                "Error", 
+                "Error",
                 $"Error al cargar los datos: {ex.Message}");
             await msg.Show();
         });
