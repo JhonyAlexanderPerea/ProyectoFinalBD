@@ -4,33 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:ProyectoFinalBD.View"
+        xmlns:proyectoFinalBd="clr-namespace:ProyectoFinalBD"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        
         x:Class="ProyectoFinalBD.View.Entities"
         x:DataType="view:Entities"
         >
     <DockPanel>
-        <TabControl>
-            <!-- Mantenimiento -->
+        <TabControl x:Name="MainTabControl" SelectionChanged="OnTabSelectionChanged">
+            <!-- Versión alternativa con ListView -->
             <TabItem Header="Mantenimiento" Foreground="Black">
                 <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <DataGrid Name="MantenimientoGrid"
-                              Margin="10"
-                              IsReadOnly="True"
+                    <TextBlock DockPanel.Dock="Top" 
+                               Text="Registros de Mantenimiento"
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center"
+                               Margin="10"/>
+       
+                    <DataGrid Name="MantenimientoGrid" 
+                              ItemsSource="{Binding Mantenimientos}"
                               AutoGenerateColumns="False"
-                              ItemsSource="{Binding Mantenimientos}">
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Código" Binding="{Binding MaintenanceId}" />
-                            <DataGridTextColumn Header="Fecha" Binding="{Binding Date}" />
-                            <DataGridTextColumn Header="Hallazgos" Binding="{Binding Findings}" />
-                            <DataGridTextColumn Header="Costo" Binding="{Binding Cost}" />
-                            <DataGridTextColumn Header="Equipo" Binding="{Binding EquipmentId}" />
+                            <DataGridTextColumn Header="ID" Binding="{Binding MaintenanceId}" Width="Auto"/>
+                            <DataGridTextColumn Header="Fecha" Binding="{Binding Date, StringFormat='dd/MM/yyyy'}" Width="Auto"/>
+                            <DataGridTextColumn Header="Hallazgos" Binding="{Binding Findings}" Width="*"/>
+                            <DataGridTextColumn Header="Costo" Binding="{Binding Cost, StringFormat='{}{0:C}'}" Width="Auto"/>
+                            <DataGridTextColumn Header="Equipo ID" Binding="{Binding EquipmentId}" Width="Auto"/>
                         </DataGrid.Columns>
                     </DataGrid>
+
                 </DockPanel>
             </TabItem>
             
@@ -42,7 +46,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="TipoEquipoGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="TipoEquipoGrid" 
+                              ItemsSource="{Binding TipoEquipos}"
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -55,7 +62,9 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="UbicacionGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="UbicacionGrid"
+                              Margin="10" 
+                              IsReadOnly="True"><!--ItemsSource="{Binding Ubicaciones}"-->
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -68,7 +77,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="EstadoEquipoGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="EstadoEquipoGrid"
+                            
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -81,7 +93,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="DanoGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="DanoGrid"
+                              
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -94,7 +109,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="EquipoGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="EquipoGrid"
+                          
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -107,7 +125,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="ProveedorGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="ProveedorGrid"
+                              
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -120,7 +141,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="UsuarioGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="UsuarioGrid"
+                        
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
@@ -133,7 +157,10 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="MunicipioGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="MunicipioGrid"
+                        
+                              Margin="10" 
+                              IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>

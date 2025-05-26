@@ -18,25 +18,50 @@ namespace ProyectoFinalBD.DAO
         public async Task<List<Maintenance>> GetAll()
         {
             var maintenances = new List<Maintenance>();
+            Console.WriteLine("Iniciando GetAll en MaintenanceRepository");
+            
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT 
-                    m.CODIGOMANTENIMIENTO AS MaintenanceId,
-                    m.FECHAMANTENIMIENTO AS Date,
-                    m.HALLAZGOSMANTENIMIENTO AS Findings,
-                    m.COSTOMANTENIMIENTO AS Cost,
-                    m.EQUIPO AS EquipmentId
-                FROM MANTENIMIENTO m";
+    SELECT 
+        m.CODIGOMANTENIMIENTO,
+        m.FECHAMANTENIMIENTO,
+        m.HALLAZGOSMANTENIMIENTO,
+        m.COSTOMANTENIMIENTO,
+        m.EQUIPO
+    FROM MANTENIMIENTO m";
 
-            using var command = new OracleCommand(query, connection);
-            await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try 
             {
-                maintenances.Add(MapMaintenanceFromReader(reader));
+                Console.WriteLine("Abriendo conexión...");
+                await connection.OpenAsync();
+                
+                using var command = new OracleCommand(query, connection);
+                Console.WriteLine("Ejecutando consulta...");
+                using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    var maintenance = new Maintenance
+                    {
+                        MaintenanceId = reader["CODIGOMANTENIMIENTO"].ToString()!,
+                        Date = Convert.ToDateTime(reader["FECHAMANTENIMIENTO"]),
+                        Findings = reader["HALLAZGOSMANTENIMIENTO"]?.ToString(),
+                        Cost = Convert.ToDecimal(reader["COSTOMANTENIMIENTO"]),
+                        EquipmentId = reader["EQUIPO"]?.ToString()
+                    };
+                    maintenances.Add(maintenance);
+                    Console.WriteLine($"Registro leído: ID={maintenance.MaintenanceId}, " +
+                            $"Fecha={maintenance.Date:dd/MM/yyyy}, " +
+                            $"Costo={maintenance.Cost:C}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error detallado en GetAll: {ex}");
+                throw;
             }
 
+            Console.WriteLine($"Total de registros recuperados: {maintenances.Count}");
             return maintenances;
         }
 
@@ -94,7 +119,7 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE MANTENIMIENTO 
-                SET FECHAMANTIMIENTO = :date,
+                SET FECHAMANTENIMIENTO = :date,
                     HALLAZGOSMANTENIMIENTO = :findings,
                     COSTOMANTENIMIENTO = :cost,
                     EQUIPO = :equipmentId

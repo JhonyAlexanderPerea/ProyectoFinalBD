@@ -35,6 +35,8 @@ namespace ProyectoFinalBD
         private void OpenViewReportes(object? sender, RoutedEventArgs e)
         {
             //ContentArea.Content = new ReportesView();
+            ContentArea.Content = new MaintenanceView();
+
         }
 
         private void OpenViewUtilidades(object? sender, RoutedEventArgs e)

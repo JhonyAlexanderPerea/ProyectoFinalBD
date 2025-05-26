@@ -1,14 +1,89 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ProyectoFinalBD.Model;
 
-public class Maintenance
+public class Maintenance : INotifyPropertyChanged
 {
-    public string MaintenanceId { get; set; }
-    public DateTime Date { get; set; }
-    public string? Findings { get; set; }
-    public decimal Cost { get; set; }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    private string _maintenanceId; 
+    private DateTime _date; 
+    private string? _findings;
+    private decimal _cost;
+    private string? _equipmentId;
+    
+    
 
-    public string? EquipmentId { get; set; }
-    public Equipment? Equipment { get; set; }
+
+    public string MaintenanceId
+    {
+        get => _maintenanceId;
+        set
+        {
+            if (_maintenanceId != value)
+            {
+                _maintenanceId = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public DateTime Date
+    {
+        get => _date;
+        set
+        {
+            if (_date != value)
+            {
+                _date = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string? Findings
+    {
+        get => _findings;
+        set
+        {
+            if (_findings != value)
+            {
+                _findings = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public decimal Cost
+    {
+        get => _cost;
+        set
+        {
+            if (_cost != value)
+            {
+                _cost = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string? EquipmentId
+    {
+        get => _equipmentId;
+        set
+        {
+            if (_equipmentId != value)
+            {
+                _equipmentId = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

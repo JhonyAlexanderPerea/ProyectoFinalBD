@@ -1,0 +1,111 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:ProyectoFinalBD.View"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:Class="ProyectoFinalBD.View.MaintenanceView"
+             x:DataType="vm:MaintenanceView">
+
+    <Grid RowDefinitions="Auto,*" Margin="20">
+        <!-- Cabecera -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Gestión de Mantenimientos"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     HorizontalAlignment="Center"
+                     Margin="0,0,0,20"/>
+
+            <!-- Panel de Búsqueda y Filtros -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBox Width="200" 
+                             Watermark="Buscar por ID o Equipo..."
+                             Name="SearchBox"/>
+                    <ComboBox Width="150" 
+                             PlaceholderText="Filtrar por..."
+                             Name="FilterComboBox">
+                        <ComboBoxItem>Todos</ComboBoxItem>
+                        <ComboBoxItem>Última semana</ComboBoxItem>
+                        <ComboBoxItem>Último mes</ComboBoxItem>
+                        <ComboBoxItem>Este año</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                
+                <Button Grid.Column="1" 
+                        Content="Nuevo Mantenimiento" 
+                        Click="OnNewMaintenance"
+                        Background="#28A745"
+                        Foreground="White"
+                        Padding="15,10"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Contenido Principal -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,300">
+            <!-- Lista de Mantenimientos -->
+            <DataGrid Name="MaintenanceGrid"
+                      ItemsSource="{Binding Mantenimientos}"    
+                      SelectedItem="{Binding SelectedMaintenance}" 
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionChanged="OnMaintenanceSelected">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding MaintenanceId}" Width="Auto"/>
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Hallazgos" Binding="{Binding Findings}" Width="*"/>
+                    <DataGridTextColumn Header="Costo" Binding="{Binding Cost, StringFormat='{}{0:C}'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Equipo" Binding="{Binding EquipmentId}" Width="Auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Panel de Detalles -->
+            <Border Grid.Column="1" 
+                    Margin="20,0,0,0" 
+                    Padding="20" 
+                    Background="#F8F9FA"
+                    BorderBrush="#DEE2E6"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                <Grid RowDefinitions="Auto,*,Auto" Name="DetailsPanel">
+                    <TextBlock Text="Detalles del Mantenimiento"
+                             FontSize="18"
+                             FontWeight="Bold"
+                             Margin="0,0,0,20"/>
+
+                    <StackPanel Grid.Row="1" Spacing="15">
+                        <TextBox Watermark="ID"
+                                Text="{Binding SelectedMaintenance.MaintenanceId}"/>
+                        <CalendarDatePicker SelectedDate="{Binding SelectedMaintenance.Date}"/>
+                        <TextBox Watermark="Hallazgos"
+                                Text="{Binding SelectedMaintenance.Findings}"
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                Height="100"/>
+                        <NumericUpDown Value="{Binding SelectedMaintenance.Cost}"
+                                     Minimum="0"
+                                     Increment="100"/>
+                        <TextBox Watermark="ID del Equipo"
+                                Text="{Binding SelectedMaintenance.EquipmentId}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" 
+                              Orientation="Horizontal" 
+                              HorizontalAlignment="Center"
+                              Spacing="10"
+                              Margin="0,20,0,0">
+                        <Button Content="Guardar"
+                                Click="OnSaveMaintenance"                                Background="#007BFF"
+                                Foreground="White"
+                                Padding="20,10"/>
+                        <Button Content="Eliminar"
+                                Click="OnDeleteMaintenance"
+                                Background="#DC3545"
+                                Foreground="White"
+                                Padding="20,10"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
