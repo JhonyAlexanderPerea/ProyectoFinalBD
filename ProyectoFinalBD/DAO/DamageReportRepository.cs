@@ -22,23 +22,24 @@ namespace ProyectoFinalBD.DAO
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM DAMAGE_REPORTS";
+            command.CommandText = "SELECT * FROM DANIO"; // Nombre real de la tabla
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 reports.Add(new DamageReport
                 {
-                    DamageReportId = reader["DAMAGE_REPORT_ID"].ToString(),
-                    Date = Convert.ToDateTime(reader["DATE"]),
-                    Cause = reader["CAUSE"].ToString(),
-                    Description = reader["DESCRIPTION"]?.ToString(),
-                    EquipmentId = reader["EQUIPMENT_ID"]?.ToString()
+                    DamageReportId = reader["CODIGODANIO"].ToString(),
+                    Date = Convert.ToDateTime(reader["FECHADANIO"]),
+                    Cause = reader["CAUSADANIO"].ToString(),
+                    Description = reader["DESCRIPCIONDANIO"]?.ToString(),
+                    EquipmentId = reader["EQUIPO"]?.ToString()
                 });
             }
 
             return reports;
         }
+
 
         public async Task<DamageReport> GetById(string id)
         {

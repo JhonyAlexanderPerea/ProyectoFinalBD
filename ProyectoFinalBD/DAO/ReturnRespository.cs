@@ -40,10 +40,16 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT d.*, p.fechaPrestamo as loan_date
-                FROM Devolucion d
-                JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
-                WHERE d.codigoDevolucion = :returnId";
+                SELECT 
+    d.codigoDevolution AS ""return_id"",
+    d.fechaDevolution AS ""return_date"",
+    d.observacionesDevolution AS ""notes"",
+    d.pagoMulta AS ""penalty_paid"",
+    d.prestamo,
+    p.fechaPrestamo AS ""loan_date""
+FROM Devolucion d
+JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
+";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnId;
@@ -117,17 +123,18 @@ namespace ProyectoFinalBD.DAO
         {
             return new Return
             {
-                ReturnId = reader["codigoDevolucion"].ToString()!,
-                Date = Convert.ToDateTime(reader["fecha"]),
-                Notes = reader["notas"].ToString()!,
-                PenaltyPaid = reader["penalizacionPagada"] != DBNull.Value ? 
-                    Convert.ToDecimal(reader["penalizacionPagada"]) : null,
-                LoanId = reader["prestamo"].ToString()!,
+                ReturnId = reader["CODIGODEVOLUTION"].ToString()!,
+                Date = Convert.ToDateTime(reader["FECHADEVOLUTION"]),
+                Notes = reader["OBSERVACIONESDEVOLUTION"].ToString()!,
+                PenaltyPaid = reader["PAGOMULTA"] != DBNull.Value ? 
+                    Convert.ToDecimal(reader["PAGOMULTA"]) : null,
+                LoanId = reader["PRESTAMO"].ToString()!,
                 Loan = new Loan 
                 { 
                     Date = Convert.ToDateTime(reader["loan_date"])
                 }
             };
         }
+
     }
 }

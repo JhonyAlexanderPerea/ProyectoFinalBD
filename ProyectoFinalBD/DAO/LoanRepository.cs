@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using ProyectoFinalBD.Model;
@@ -20,11 +21,19 @@ namespace ProyectoFinalBD.DAO
             var loans = new List<Loan>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT p.*, e.nombreEquipo as equipment_name, 
-                       u.nombreUsuario as user_name
-                FROM Prestamo p
-                JOIN Equipo e ON p.equipo = e.codigoEquipo
-                JOIN Usuario u ON p.usuario = u.codigoUsuario";
+                SELECT 
+    p.codigoPrestamo,
+    p.fechaPrestamo,
+    p.fechaLimitePrestamo,
+    p.costoMultaPrestamo,
+    p.equipo,
+    p.usuario,
+    e.nombreEquipo AS equipment_name,
+    u.nombreUser AS user_name
+FROM Prestamo p
+JOIN Equipo e ON p.equipo = e.codigoEquipo
+JOIN Usuario u ON p.usuario = u.codigoUser
+";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -174,19 +183,20 @@ namespace ProyectoFinalBD.DAO
             return loans;
         }
 
-        private static Loan MapLoanFromReader(System.Data.IDataReader reader)
+        private static Loan MapLoanFromReader(IDataReader reader)
         {
             return new Loan
             {
-                LoanId = reader["codigoPrestamo"].ToString()!,
-                Date = Convert.ToDateTime(reader["fechaPrestamo"]),
-                DueDate = Convert.ToDateTime(reader["fechaDevolucion"]),
-                PenaltyCost = Convert.ToDecimal(reader["costoPenalizacion"]),
-                EquipmentId = reader["equipo"].ToString(),
-                UserId = reader["usuario"].ToString(),
+                LoanId = reader["CODIGOPRESTAMO"].ToString()!,
+                Date = Convert.ToDateTime(reader["FECHAPRESTAMO"]),
+                DueDate = Convert.ToDateTime(reader["FECHALIMITEPRESTAMO"]),
+                PenaltyCost = Convert.ToDecimal(reader["COSTOMULTAPRESTAMO"]),
+                EquipmentId = reader["EQUIPO"].ToString(),
+                UserId = reader["USUARIO"].ToString(),
                 Equipment = new Equipment { Name = reader["equipment_name"].ToString()! },
                 User = new User { Name = reader["user_name"].ToString()! }
             };
         }
+
     }
 }

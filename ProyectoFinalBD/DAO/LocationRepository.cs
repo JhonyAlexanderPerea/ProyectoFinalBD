@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using ProyectoFinalBD.Model;
@@ -96,13 +97,14 @@ namespace ProyectoFinalBD.DAO
             await command.ExecuteNonQueryAsync();
         }
 
-        private static Location MapLocationFromReader(System.Data.IDataReader reader)
+        private static Location MapLocationFromReader(IDataReader reader)
         {
             return new Location
             {
-                LocationId = reader["codigoUbicacion"].ToString()!,
-                Name = reader["nombreUbicacion"].ToString()!
+                LocationId = reader["CODIGOUBICACION"].ToString()!,
+                Name = reader["LUGARUBICACION"].ToString()!
             };
         }
+
     }
 }

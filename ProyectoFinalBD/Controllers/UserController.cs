@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProyectoFinalBD.DAO;
 using ProyectoFinalBD.Model;
@@ -14,6 +15,14 @@ public class UserController
     }
 
     public static User CurrentUser => _currentUser;
+    
+    public async Task<IEnumerable<User>> ObtenerUsuarios()
+    {
+        var lista = await _repository.GetAllUsers();
+        Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} roles de usuario");
+        return lista ?? new List<User>();
+    }
+
 
     public async Task<bool> Login(string email, string password)
     {

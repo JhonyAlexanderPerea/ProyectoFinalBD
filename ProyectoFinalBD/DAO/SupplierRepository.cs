@@ -125,17 +125,18 @@ namespace ProyectoFinalBD.DAO
         {
             return new Supplier
             {
-                SupplierId = reader["codigoProveedor"].ToString()!,
-                Name = reader["nombreProveedor"].ToString()!,
-                Contact = reader["contacto"].ToString()!,
-                Email = reader["correoElectronico"]?.ToString(),
-                WarrantyMonths = Convert.ToInt32(reader["mesesGarantia"]),
-                MunicipalityId = reader["municipio"]?.ToString(),
-                Municipality = reader["municipio"] != DBNull.Value ? new Municipality 
+                SupplierId = reader["CODIGOPROVEEDOR"].ToString()!,
+                Name = reader["NOMBREPROVEEDOR"].ToString()!,
+                Contact = reader["NOCONTACTOPROVEEDOR"].ToString()!,
+                Email = reader["CORREOPROVEEDOR"]?.ToString(),
+                WarrantyMonths = Convert.ToInt32(reader["GARANTIAGENMESPROVEEDOR"]),
+                MunicipalityId = reader["MUNICIPIO"]?.ToString(),
+                Municipality = reader["MUNICIPIO"] != DBNull.Value ? new Municipality 
                 { 
                     Name = reader["municipality_name"].ToString()! 
                 } : null
             };
         }
+
     }
 }

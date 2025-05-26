@@ -19,7 +19,7 @@ namespace ProyectoFinalBD.DAO
         {
             var statuses = new List<EquipmentStatus>();
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM EstadoEquipo";
+            const string query = "SELECT codigoEstadoEquipo, nombreEstadoEquipo FROM EstadoEquipo";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -29,8 +29,8 @@ namespace ProyectoFinalBD.DAO
             {
                 statuses.Add(new EquipmentStatus
                 {
-                    EquipmentStatusId = reader["codigoEstado"].ToString()!,
-                    Name = reader["nombreEstado"].ToString()!
+                    EquipmentStatusId = reader["codigoEstadoEquipo"].ToString()!,
+                    Name = reader["nombreEstadoEquipo"].ToString()!
                 });
             }
 

@@ -20,16 +20,27 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT e.*, 
-                       et.nombreTipoEquipo AS equipment_type_name,
-                       l.nombreUbicacion AS location_name,
-                       es.nombreEstado AS status_name,
-                       s.nombreProveedor AS supplier_name
-                FROM Equipo e
-                LEFT JOIN TipoEquipo et ON e.tipoEquipo = et.codigoTipoEquipo
-                LEFT JOIN Ubicacion l ON e.ubicacion = l.codigoUbicacion
-                LEFT JOIN EstadoEquipo es ON e.estadoEquipo = es.codigoEstado
-                LEFT JOIN Proveedor s ON e.proveedor = s.codigoProveedor";
+    SELECT 
+        e.CODIGOEQUIPO,
+        e.NOMBREEQUIPO,
+        e.COSTOEQUIPO,
+        e.CARACTERISTICASEQUIPO,
+        e.TIPOEQUIPO,
+        e.UBICACION,
+        e.ESTADOEQUIPO,
+        e.PROVEEDOR,
+        te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
+        u.LUGARUBICACION AS ""location_name"",
+        ee.NOMBREESTADOEQUIPO AS ""status_name"",
+        p.NOMBREPROVEEDOR AS ""supplier_name""
+    FROM 
+        EQUIPO e
+        LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
+        LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
+        LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
+        LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR";
+
+
 
             using var command = new OracleCommand(query, connection);
             var equipments = new List<Equipment>();
@@ -150,17 +161,26 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT e.*, 
-                       et.nombreTipoEquipo AS equipment_type_name,
-                       l.nombreUbicacion AS location_name,
-                       es.nombreEstado AS status_name,
-                       s.nombreProveedor AS supplier_name
-                FROM Equipo e
-                LEFT JOIN TipoEquipo et ON e.tipoEquipo = et.codigoTipoEquipo
-                LEFT JOIN Ubicacion l ON e.ubicacion = l.codigoUbicacion
-                LEFT JOIN EstadoEquipo es ON e.estadoEquipo = es.codigoEstado
-                LEFT JOIN Proveedor s ON e.proveedor = s.codigoProveedor
-                WHERE e.ubicacion = :locationId";
+    SELECT 
+        e.CODIGOEQUIPO,
+        e.NOMBREEQUIPO,
+        e.COSTOEQUIPO,
+        e.CARACTERISTICASEQUIPO,
+        e.TIPOEQUIPO,
+        e.UBICACION,
+        e.ESTADOEQUIPO,
+        e.PROVEEDOR,
+        te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
+        u.LUGARUBICACION AS ""location_name"",
+        ee.NOMBREESTADOEQUIPO AS ""status_name"",
+        p.NOMBREPROVEEDOR AS ""supplier_name""
+    FROM 
+        EQUIPO e
+        LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
+        LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
+        LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
+        LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR";
+
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = locationId;
@@ -181,31 +201,37 @@ namespace ProyectoFinalBD.DAO
         {
             return new Equipment
             {
-                EquipmentId = reader["codigoEquipo"].ToString()!,
-                Name = reader["nombreEquipo"].ToString()!,
-                Cost = Convert.ToDecimal(reader["costo"]),
-                Features = reader["caracteristicas"].ToString()!,
-                EquipmentTypeId = reader["tipoEquipo"].ToString(),
-                LocationId = reader["ubicacion"].ToString(),
-                EquipmentStatusId = reader["estadoEquipo"].ToString(),
-                SupplierId = reader["proveedor"].ToString(),
+                EquipmentId = reader["CODIGOEQUIPO"].ToString()!,
+                Name = reader["NOMBREEQUIPO"].ToString()!,
+                Cost = Convert.ToDecimal(reader["COSTOEQUIPO"]),
+                Features = reader["CARACTERISTICASEQUIPO"].ToString()!,
+                EquipmentTypeId = reader["TIPOEQUIPO"].ToString(),
+                LocationId = reader["UBICACION"].ToString(),
+                EquipmentStatusId = reader["ESTADOEQUIPO"].ToString(),
+                SupplierId = reader["PROVEEDOR"].ToString(),
+
+                // alias en minúsculas definidos con comillas dobles
                 EquipmentType = reader["equipment_type_name"] != DBNull.Value ? new EquipmentType 
                 { 
                     Name = reader["equipment_type_name"].ToString()! 
                 } : null,
+
                 Location = reader["location_name"] != DBNull.Value ? new Location 
                 { 
                     Name = reader["location_name"].ToString()! 
                 } : null,
+
                 EquipmentStatus = reader["status_name"] != DBNull.Value ? new EquipmentStatus 
                 { 
                     Name = reader["status_name"].ToString()! 
                 } : null,
+
                 Supplier = reader["supplier_name"] != DBNull.Value ? new Supplier 
                 { 
                     Name = reader["supplier_name"].ToString()! 
                 } : null
             };
         }
+
     }
 }

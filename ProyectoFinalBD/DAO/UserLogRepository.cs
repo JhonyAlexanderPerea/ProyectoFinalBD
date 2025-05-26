@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using ProyectoFinalBD.Model;
@@ -20,9 +21,10 @@ namespace ProyectoFinalBD.DAO
             var logs = new List<UserLog>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario as user_name
-                FROM RegistroUsuario l
-                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario";
+    SELECT l.*, u.nombreUser AS user_name
+    FROM LogUsuario l
+    LEFT JOIN Usuario u ON l.usuario = u.codigoUser";
+
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -115,19 +117,20 @@ namespace ProyectoFinalBD.DAO
             return logs;
         }
 
-        private static UserLog MapUserLogFromReader(System.Data.IDataReader reader)
+        private static UserLog MapUserLogFromReader(IDataReader reader)
         {
             return new UserLog
             {
-                UserLogId = reader["codigoRegistro"].ToString()!,
-                Date = Convert.ToDateTime(reader["fecha"]),
-                Entry = reader["entrada"].ToString()!,
-                UserId = reader["usuario"]?.ToString(),
-                User = reader["usuario"] != DBNull.Value ? new User 
+                UserLogId = reader["CODIGOLOGUSER"].ToString()!,
+                Date = Convert.ToDateTime(reader["FECHA"]),
+                Entry = reader["REGISTRO"].ToString()!,
+                UserId = reader["USUARIO"]?.ToString(),
+                User = reader["USUARIO"] != DBNull.Value ? new User 
                 { 
                     Name = reader["user_name"].ToString()! 
                 } : null
             };
         }
+
     }
 }

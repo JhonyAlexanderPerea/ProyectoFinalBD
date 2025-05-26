@@ -15,6 +15,11 @@
             <!-- Versión alternativa con ListView -->
             <TabItem Header="Mantenimiento" Foreground="Black">
                 <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
                     <TextBlock DockPanel.Dock="Top" 
                                Text="Registros de Mantenimiento"
                                FontSize="20" 
@@ -47,11 +52,18 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="TipoEquipoGrid" 
-                              ItemsSource="{Binding TipoEquipos}"
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    
+                    <ListBox ItemsSource="{Binding EquipmentType}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding EquipmentTypeId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding Description}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </DockPanel>
             </TabItem>
             
@@ -63,10 +75,17 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="UbicacionGrid"
-                              Margin="10" 
-                              IsReadOnly="True"><!--ItemsSource="{Binding Ubicaciones}"-->
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Locations}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding LocationId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -78,11 +97,17 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="EstadoEquipoGrid"
-                            
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding EquipmentStatus}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding EquipmentStatusId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -94,11 +119,20 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="DanoGrid"
-                              
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding DamageReports}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding DamageReportId}" Width="100"/>
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
+                                    <TextBlock Text="{Binding Cause}" Width="150"/>
+                                    <TextBlock Text="{Binding Description}" Width="200"/>
+                                    <TextBlock Text="{Binding EquipmentId}" Width="150"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -110,11 +144,22 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="EquipoGrid"
-                          
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Equipment}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding EquipmentId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding Cost, StringFormat='{}{0:C}'}" Width="100"/>
+                                    <TextBlock Text="{Binding Features}" Width="200"/>
+                                    <TextBlock Text="{Binding EquipmentTypeId}" Width="150"/>
+                                    <TextBlock Text="{Binding LocationId}" Width="150"/>
+                                    <TextBlock Text="{Binding EquipmentStatusId}" Width="100"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -126,11 +171,21 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="ProveedorGrid"
-                              
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Suppliers}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding SupplierId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding Contact}" Width="100"/>
+                                    <TextBlock Text="{Binding Email}" Width="200"/>
+                                    <TextBlock Text="{Binding WarrantyMonths}" Width="100"/>
+                                    <TextBlock Text="{Binding Municipality}" Width="150"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -142,11 +197,20 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="UsuarioGrid"
-                        
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Users}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding UserId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="150"/>
+                                    <TextBlock Text="{Binding Email}" Width="200"/>
+                                    <TextBlock Text="{Binding UserRole}" Width="100"/>
+                                    <TextBlock Text="{Binding MunicipalityId}" Width="150"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -158,11 +222,18 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="MunicipioGrid"
-                        
-                              Margin="10" 
-                              IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Municipalities}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding MunicipalityId}" Width="100"/>
+                                    <TextBlock Text="{Binding Name}" Width="200"/>
+                                    <TextBlock Text="{Binding Description}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -174,8 +245,20 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="DevolucionGrid" Margin="10" IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Returns}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding ReturnId}" Width="100"/>
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
+                                    <TextBlock Text="{Binding Notes}" Width="200"/>
+                                    <TextBlock Text="{Binding PenaltyPaid}" Width="100"/>
+                                    <TextBlock Text="{Binding LoanId}" Width="100"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -187,8 +270,21 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="PrestamoGrid" Margin="10" IsReadOnly="True">
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Loans}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding LoanId}" Width="100"/>
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
+                                    <TextBlock Text="{Binding DueDate, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
+                                    <TextBlock Text="{Binding PenaltyCost, StringFormat='{}{0:C}'}" Width="100"/>
+                                    <TextBlock Text="{Binding EquipmentId}" Width="150"/>
+                                    <TextBlock Text="{Binding UserId}" Width="150"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
             
@@ -200,8 +296,20 @@
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="LogUsuarioGrid" Margin="10" IsReadOnly="True">
-                    </DataGrid>
+                    
+                    <ListBox ItemsSource="{Binding UserLogs}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding UserLogId}" Width="100"/>
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="150"/>
+                                    <TextBlock Text="{Binding Entry}" Width="300"/>
+                                    <TextBlock Text="{Binding UserId}" Width="150"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
                 </DockPanel>
             </TabItem>
         </TabControl>
