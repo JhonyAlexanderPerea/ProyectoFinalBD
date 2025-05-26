@@ -1,13 +1,86 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ProyectoFinalBD.Model;
 
-public class UserLog
+public class UserLog : INotifyPropertyChanged
 {
-    public string UserLogId { get; set; }
-    public DateTime Date { get; set; }
-    public string Entry { get; set; }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    private string _userLogId;
+    private DateTime _date;
+    private string _entry;
+    private string? _userId;
+    private User? _user;
 
-    public string? UserId { get; set; }
-    public User? User { get; set; }
+    public string UserLogId
+    {
+        get => _userLogId;
+        set
+        {
+            if (_userLogId != value)
+            {
+                _userLogId = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public DateTime Date
+    {
+        get => _date;
+        set
+        {
+            if (_date != value)
+            {
+                _date = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string Entry
+    {
+        get => _entry;
+        set
+        {
+            if (_entry != value)
+            {
+                _entry = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string? UserId
+    {
+        get => _userId;
+        set
+        {
+            if (_userId != value)
+            {
+                _userId = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public User? User
+    {
+        get => _user;
+        set
+        {
+            if (_user != value)
+            {
+                _user = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

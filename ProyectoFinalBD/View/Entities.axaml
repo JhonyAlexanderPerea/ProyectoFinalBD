@@ -22,18 +22,19 @@
                                HorizontalAlignment="Center"
                                Margin="10"/>
        
-                    <DataGrid Name="MantenimientoGrid" 
-                              ItemsSource="{Binding Mantenimientos}"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding MaintenanceId}" Width="Auto"/>
-                            <DataGridTextColumn Header="Fecha" Binding="{Binding Date, StringFormat='dd/MM/yyyy'}" Width="Auto"/>
-                            <DataGridTextColumn Header="Hallazgos" Binding="{Binding Findings}" Width="*"/>
-                            <DataGridTextColumn Header="Costo" Binding="{Binding Cost, StringFormat='{}{0:C}'}" Width="Auto"/>
-                            <DataGridTextColumn Header="Equipo ID" Binding="{Binding EquipmentId}" Width="Auto"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Mantenimientos}" Margin="10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding MaintenanceId}" Width="60"/>
+                                    <TextBlock Text="{Binding Date}" Width="100"/>
+                                    <TextBlock Text="{Binding Findings}" Width="200"/>
+                                    <TextBlock Text="{Binding Cost}" Width="60"/>
+                                    <TextBlock Text="{Binding EquipmentId}" Width="60"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
                 </DockPanel>
             </TabItem>

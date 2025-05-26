@@ -1,7 +1,43 @@
-﻿namespace ProyectoFinalBD.Model;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public class UserRole
+namespace ProyectoFinalBD.Model;
+
+public class UserRole : INotifyPropertyChanged
 {
-    public string UserRoleId { get; set; }
-    public string Name { get; set; }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    private string _userRoleId;
+    private string _name;
+
+    public string UserRoleId
+    {
+        get => _userRoleId;
+        set
+        {
+            if (_userRoleId != value)
+            {
+                _userRoleId = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            if (_name != value)
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
