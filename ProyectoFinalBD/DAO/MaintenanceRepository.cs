@@ -20,9 +20,13 @@ namespace ProyectoFinalBD.DAO
             var maintenances = new List<Maintenance>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT m.*, e.nombreEquipo as equipment_name
-                FROM Mantenimiento m
-                JOIN Equipo e ON m.equipo = e.codigoEquipo";
+                SELECT 
+                    m.CODIGOMANTENIMIENTO AS MaintenanceId,
+                    m.FECHAMANTENIMIENTO AS Date,
+                    m.HALLAZGOSMANTENIMIENTO AS Findings,
+                    m.COSTOMANTENIMIENTO AS Cost,
+                    m.EQUIPO AS EquipmentId
+                FROM MANTENIMIENTO m";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -40,10 +44,14 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT m.*, e.nombreEquipo as equipment_name
-                FROM Mantenimiento m
-                JOIN Equipo e ON m.equipo = e.codigoEquipo
-                WHERE m.codigoMantenimiento = :maintenanceId";
+                SELECT 
+                    m.CODIGOMANTENIMIENTO AS MaintenanceId,
+                    m.FECHAMANTENIMIENTO AS Date,
+                    m.HALLAZGOSMANTENIMIENTO AS Findings,
+                    m.COSTOMANTENIMIENTO AS Cost,
+                    m.EQUIPO AS EquipmentId
+                FROM MANTENIMIENTO m
+                WHERE m.CODIGOMANT = :maintenanceId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("maintenanceId", OracleDbType.Varchar2).Value = maintenanceId;
@@ -63,8 +71,8 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                INSERT INTO Mantenimiento 
-                (codigoMantenimiento, fecha, hallazgos, costo, equipo) 
+                INSERT INTO MANTENIMIENTO 
+                (CODIGOMANTENIMIENTO, FECHAMANTENIMIENTO, HALLAZGOSMANTENIMIENTO, COSTOMANTENIMIENTO, EQUIPO) 
                 VALUES 
                 (:maintenanceId, :date, :findings, :cost, :equipmentId)";
 
@@ -85,12 +93,12 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                UPDATE Mantenimiento 
-                SET fecha = :date,
-                    hallazgos = :findings,
-                    costo = :cost,
-                    equipo = :equipmentId
-                WHERE codigoMantenimiento = :maintenanceId";
+                UPDATE MANTENIMIENTO 
+                SET FECHAMANTIMIENTO = :date,
+                    HALLAZGOSMANTENIMIENTO = :findings,
+                    COSTOMANTENIMIENTO = :cost,
+                    EQUIPO = :equipmentId
+                WHERE CODIGOMANT = :maintenanceId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("date", OracleDbType.Date).Value = maintenance.Date;
@@ -108,7 +116,7 @@ namespace ProyectoFinalBD.DAO
         public async Task Delete(string maintenanceId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM Mantenimiento WHERE codigoMantenimiento = :maintenanceId";
+            const string query = "DELETE FROM MANTENIMIENTO WHERE CODIGOMANTENIMIENTO = :maintenanceId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("maintenanceId", OracleDbType.Varchar2).Value = maintenanceId;
@@ -121,15 +129,11 @@ namespace ProyectoFinalBD.DAO
         {
             return new Maintenance
             {
-                MaintenanceId = reader["codigoMantenimiento"].ToString()!,
-                Date = Convert.ToDateTime(reader["fecha"]),
-                Findings = reader["hallazgos"]?.ToString(),
-                Cost = Convert.ToDecimal(reader["costo"]),
-                EquipmentId = reader["equipo"]?.ToString(),
-                Equipment = reader["equipo"] != DBNull.Value ? new Equipment 
-                { 
-                    Name = reader["equipment_name"].ToString()! 
-                } : null
+                MaintenanceId = reader["MaintenanceId"].ToString()!,
+                Date = Convert.ToDateTime(reader["Date"]),
+                Findings = reader["Findings"]?.ToString(),
+                Cost = Convert.ToDecimal(reader["Cost"]),
+                EquipmentId = reader["EquipmentId"]?.ToString()
             };
         }
     }

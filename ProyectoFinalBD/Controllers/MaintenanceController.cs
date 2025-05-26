@@ -1,6 +1,24 @@
-﻿namespace ProyectoFinalBD.Controllers;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ProyectoFinalBD.DAO;
+using ProyectoFinalBD.Model;
+
+namespace ProyectoFinalBD.Controllers;
 
 public class MaintenanceController
 {
-    
+    private readonly MaintenanceRepository _repository;
+
+    public MaintenanceController()
+    {
+        _repository = new MaintenanceRepository();
+    }
+
+    public async Task<List<Maintenance>> ObtenerMantenimientos()
+    {
+        var lista =  await _repository.GetAll();
+        Console.WriteLine($"Se cargaron {lista.Count} mantenimientos.");
+        return lista;
+    }
 }

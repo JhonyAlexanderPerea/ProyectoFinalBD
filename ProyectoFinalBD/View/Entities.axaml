@@ -1,45 +1,181 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+﻿<UserControl
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:ProyectoFinalBD.View"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ProyectoFinalBD.View.Entities"
-        Title="Gestión de Entidades">
+        x:DataType="view:Entities"
+        >
     <DockPanel>
         <TabControl>
-            <TabItem Header="Clientes">
+            <!-- Mantenimiento -->
+            <TabItem Header="Mantenimiento" Foreground="Black">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White"/>
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="ClientesGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="MantenimientoGrid"
+                              Margin="10"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              ItemsSource="{Binding Mantenimientos}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Código" Binding="{Binding MaintenanceId}" />
+                            <DataGridTextColumn Header="Fecha" Binding="{Binding Date}" />
+                            <DataGridTextColumn Header="Hallazgos" Binding="{Binding Findings}" />
+                            <DataGridTextColumn Header="Costo" Binding="{Binding Cost}" />
+                            <DataGridTextColumn Header="Equipo" Binding="{Binding EquipmentId}" />
+                        </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="Productos">
+            
+            <!-- Tipo de Equipo -->
+            <TabItem Header="Tipo de Equipo" Foreground="Black">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White"/>
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="ProductosGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="TipoEquipoGrid" Margin="10" IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="Empleados">
+            
+            <!-- Ubicación -->
+            <TabItem Header="Ubicación" Foreground="Black">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White"/>
                         <Button Content="Editar" Background="Orange" Foreground="White"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"/>
                     </StackPanel>
-                    <DataGrid Name="EmpleadosGrid" Margin="10" IsReadOnly="True">
+                    <DataGrid Name="UbicacionGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Estado de Equipo -->
+            <TabItem Header="Estado de Equipo" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="EstadoEquipoGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Daño -->
+            <TabItem Header="Daños" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="DanoGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Equipo -->
+            <TabItem Header="Equipos" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="EquipoGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Proveedor -->
+            <TabItem Header="Proveedores" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="ProveedorGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Usuario -->
+            <TabItem Header="Usuarios" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="UsuarioGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Municipio -->
+            <TabItem Header="Municipios" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="MunicipioGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Devolución -->
+            <TabItem Header="Devoluciones" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="DevolucionGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Préstamo -->
+            <TabItem Header="Préstamos" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="PrestamoGrid" Margin="10" IsReadOnly="True">
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            
+            <!-- Log de Usuario -->
+            <TabItem Header="Log de Usuarios" Foreground="Black">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White"/>
+                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                    </StackPanel>
+                    <DataGrid Name="LogUsuarioGrid" Margin="10" IsReadOnly="True">
                     </DataGrid>
                 </DockPanel>
             </TabItem>
         </TabControl>
     </DockPanel>
-</Window>
+</UserControl>

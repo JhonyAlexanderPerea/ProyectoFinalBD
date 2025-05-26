@@ -23,7 +23,8 @@ namespace ProyectoFinalBD
 
         private void OpenViewEntidades(object? sender, RoutedEventArgs e)
         {
-            //ContentArea.Content = new EntidadesView();
+            ContentArea.Content = new Entities();
+            
         }
 
         private void OpenViewTransacciones(object? sender, RoutedEventArgs e)
