@@ -1,25 +1,22 @@
 ﻿<UserControl
-        xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:view="clr-namespace:ProyectoFinalBD.View"
-        xmlns:proyectoFinalBd="clr-namespace:ProyectoFinalBD"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        
-        x:Class="ProyectoFinalBD.View.Entities"
-        x:DataType="view:Entities"
-        >
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="clr-namespace:ProyectoFinalBD.View"
+    xmlns:proyectoFinalBd="clr-namespace:ProyectoFinalBD"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="ProyectoFinalBD.View.Entities"
+    x:DataType="view:Entities">
     <DockPanel>
         <TabControl x:Name="MainTabControl" SelectionChanged="OnTabSelectionChanged">
-            <!-- Versión alternativa con ListView -->
+            <!-- Mantenimiento -->
             <TabItem>
                 <TabItem.Header>
                     <TextBlock Text="Mantenimiento" Foreground="Black" />
                 </TabItem.Header>
 
                 <DockPanel>
-                    <!-- Título -->
                     <TextBlock DockPanel.Dock="Top"
                                Text="Registros de Mantenimiento"
                                Foreground="Black"
@@ -28,7 +25,6 @@
                                HorizontalAlignment="Center"
                                Margin="0,0,0,10" />
 
-                    <!-- Botones CRUD -->
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
                         <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
@@ -36,9 +32,7 @@
                                 Command="{Binding DeleteCommand}" />
                     </StackPanel>
 
-                    <!-- Contenedor de Encabezado + ListBox -->
                     <StackPanel Margin="10">
-                        <!-- Encabezado de columnas -->
                         <Grid Background="LightGray">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60" />
@@ -54,7 +48,6 @@
                             <TextBlock Grid.Column="4" Text="Equipo" FontWeight="Bold" Margin="5" />
                         </Grid>
 
-                        <!-- Lista -->
                         <ListBox ItemsSource="{Binding Mantenimientos}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -72,274 +65,589 @@
                 </DockPanel>
             </TabItem>
 
-
-            
             <!-- Tipo de Equipo -->
-            <TabItem Header="Tipo de Equipo" Foreground="Black">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Tipo de Equipo" Foreground="Black" />
+                </TabItem.Header>
+
                 <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Tipos de Equipo"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
                     </StackPanel>
-                    
-                    <ListBox ItemsSource="{Binding EquipmentType}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding EquipmentTypeId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="150"/>
-                                    <TextBlock Text="{Binding Description}" Width="200"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Descripción" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding EquipmentType}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding EquipmentTypeId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="150" />
+                                        <TextBlock Text="{Binding Description}" Width="200" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
+
             <!-- Ubicación -->
-            <TabItem Header="Ubicación" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Locations}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding LocationId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="200"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Ubicación" Foreground="Black" />
+                </TabItem.Header>
 
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Ubicaciones"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Locations}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding LocationId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="200" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
+
             <!-- Estado de Equipo -->
-            <TabItem Header="Estado de Equipo" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding EquipmentStatus}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding EquipmentStatusId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="200"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Estado de Equipo" Foreground="Black" />
+                </TabItem.Header>
 
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Estados de Equipo"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding EquipmentStatus}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding EquipmentStatusId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="200" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Daño -->
-            <TabItem Header="Daños" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding DamageReports}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding DamageReportId}" Width="100"/>
-                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
-                                    <TextBlock Text="{Binding Cause}" Width="150"/>
-                                    <TextBlock Text="{Binding Description}" Width="200"/>
-                                    <TextBlock Text="{Binding EquipmentId}" Width="150"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Daños -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Daños" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Reportes de Daños"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Fecha" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Causa" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Descripción" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="ID Equipo" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding DamageReports}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding DamageReportId}" Width="100" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" />
+                                        <TextBlock Text="{Binding Cause}" Width="150" />
+                                        <TextBlock Text="{Binding Description}" Width="200" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding EquipmentId}" Width="150" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Equipo -->
-            <TabItem Header="Equipos" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Equipment}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding EquipmentId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="150"/>
-                                    <TextBlock Text="{Binding Cost, StringFormat='{}{0:C}'}" Width="100"/>
-                                    <TextBlock Text="{Binding Features}" Width="200"/>
-                                    <TextBlock Text="{Binding EquipmentTypeId}" Width="150"/>
-                                    <TextBlock Text="{Binding LocationId}" Width="150"/>
-                                    <TextBlock Text="{Binding EquipmentStatusId}" Width="100"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Equipos -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Equipos" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Listado de Equipos"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Costo" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Características" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="Tipo" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="5" Text="Ubicación" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="6" Text="Estado" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Equipment}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding EquipmentId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="150" />
+                                        <TextBlock Text="{Binding Cost, StringFormat='{}{0:C}'}" Width="100" />
+                                        <TextBlock Text="{Binding Features}" Width="200" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding EquipmentTypeId}" Width="150" />
+                                        <TextBlock Text="{Binding LocationId}" Width="150" />
+                                        <TextBlock Text="{Binding EquipmentStatusId}" Width="100" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Proveedor -->
-            <TabItem Header="Proveedores" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Suppliers}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding SupplierId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="150"/>
-                                    <TextBlock Text="{Binding Contact}" Width="100"/>
-                                    <TextBlock Text="{Binding Email}" Width="200"/>
-                                    <TextBlock Text="{Binding WarrantyMonths}" Width="100"/>
-                                    <TextBlock Text="{Binding Municipality}" Width="150"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Proveedores -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Proveedores" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Lista de Proveedores"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Contacto" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Email" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="Garantía" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="5" Text="Municipio" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Suppliers}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding SupplierId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="150" />
+                                        <TextBlock Text="{Binding Contact}" Width="100" />
+                                        <TextBlock Text="{Binding Email}" Width="200" />
+                                        <TextBlock Text="{Binding WarrantyMonths}" Width="100" />
+                                        <TextBlock Text="{Binding Municipality}" Width="150" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Usuario -->
-            <TabItem Header="Usuarios" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Users}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding UserId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="150"/>
-                                    <TextBlock Text="{Binding Email}" Width="200"/>
-                                    <TextBlock Text="{Binding UserRole}" Width="100"/>
-                                    <TextBlock Text="{Binding MunicipalityId}" Width="150"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Usuarios -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Usuarios" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Gestión de Usuarios"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Email" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Rol" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="Municipio" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Users}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding UserId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="150" />
+                                        <TextBlock Text="{Binding Email}" Width="200" />
+                                        <TextBlock Text="{Binding UserRole}" Width="100" />
+                                        <TextBlock Text="{Binding MunicipalityId}" Width="150" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Municipio -->
-            <TabItem Header="Municipios" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Municipalities}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding MunicipalityId}" Width="100"/>
-                                    <TextBlock Text="{Binding Name}" Width="200"/>
-                                    <TextBlock Text="{Binding Description}" Width="200"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Municipios -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Municipios" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Lista de Municipios"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Nombre" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Descripción" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Municipalities}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding MunicipalityId}" Width="100" />
+                                        <TextBlock Text="{Binding Name}" Width="200" />
+                                        <TextBlock Text="{Binding Description}" Width="200" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Devolución -->
-            <TabItem Header="Devoluciones" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Returns}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding ReturnId}" Width="100"/>
-                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
-                                    <TextBlock Text="{Binding Notes}" Width="200"/>
-                                    <TextBlock Text="{Binding PenaltyPaid}" Width="100"/>
-                                    <TextBlock Text="{Binding LoanId}" Width="100"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Devoluciones -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Devoluciones" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Registro de Devoluciones"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Fecha" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Notas" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Penalidad" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="Préstamo" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Returns}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding ReturnId}" Width="100" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" />
+                                        <TextBlock Text="{Binding Notes}" Width="200" />
+                                        <TextBlock Text="{Binding PenaltyPaid}" Width="100" />
+                                        <TextBlock Text="{Binding LoanId}" Width="100" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Préstamo -->
-            <TabItem Header="Préstamos" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Loans}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding LoanId}" Width="100"/>
-                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
-                                    <TextBlock Text="{Binding DueDate, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100"/>
-                                    <TextBlock Text="{Binding PenaltyCost, StringFormat='{}{0:C}'}" Width="100"/>
-                                    <TextBlock Text="{Binding EquipmentId}" Width="150"/>
-                                    <TextBlock Text="{Binding UserId}" Width="150"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Préstamos -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Préstamos" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Control de Préstamos"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Fecha" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Vencimiento" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Penalidad" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="4" Text="Equipo" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="5" Text="Usuario" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding Loans}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding LoanId}" Width="100" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="100" />
+                                        <TextBlock Text="{Binding DueDate, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                   Width="100" />
+                                        <TextBlock Text="{Binding PenaltyCost, StringFormat='{}{0:C}'}" Width="100" />
+                                        <TextBlock Text="{Binding EquipmentId}" Width="150" />
+                                        <TextBlock Text="{Binding UserId}" Width="150" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
-            
-            <!-- Log de Usuario -->
-            <TabItem Header="Log de Usuarios" Foreground="Black">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
-                        <Button Content="Nuevo" Background="Green" Foreground="White"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White"/>
-                        <Button Content="Eliminar" Background="Red" Foreground="White"/>
-                    </StackPanel>
-                    
-                    <ListBox ItemsSource="{Binding UserLogs}" Margin="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding UserLogId}" Width="100"/>
-                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="150"/>
-                                    <TextBlock Text="{Binding Entry}" Width="300"/>
-                                    <TextBlock Text="{Binding UserId}" Width="150"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
 
+            <!-- Log de Usuarios -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Log de Usuarios" Foreground="Black" />
+                </TabItem.Header>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top"
+                               Text="Registro de Actividades"
+                               Foreground="Black"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
+                        <Button Content="Nuevo" Background="Green" Foreground="White" Command="{Binding AddCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Eliminar" Background="Red" Foreground="White"
+                                Command="{Binding DeleteCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="10">
+                        <Grid Background="LightGray">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="Fecha" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="2" Text="Entrada" FontWeight="Bold" Margin="5" />
+                            <TextBlock Grid.Column="3" Text="Usuario" FontWeight="Bold" Margin="5" />
+                        </Grid>
+
+                        <ListBox ItemsSource="{Binding UserLogs}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding UserLogId}" Width="100" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
+                                                   Width="150" />
+                                        <TextBlock Text="{Binding Entry}" Width="300" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding UserId}" Width="150" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
         </TabControl>

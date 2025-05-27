@@ -52,7 +52,35 @@ public partial class Entities : UserControl, INotifyPropertyChanged
         DeleteCommand = ReactiveCommand.Create(DeleteItem);
         DataContext = this;
 
-        Loaded += async (s, e) => await CargarMantenimientosAsync();
+        Loaded += async (s, e) =>
+        {
+            try
+            {
+                await CargarTodosLosDatos();
+            }
+            catch (Exception ex)
+            {
+                await ShowError("Error", $"Error al cargar los datos iniciales: {ex.Message}");
+            }
+        };
+    }
+
+    private async Task CargarTodosLosDatos()
+    {
+        await Task.WhenAll(
+            CargarMantenimientosAsync(),
+            CargarTiposEquipoAsync(),
+            CargarUbicacionesAsync(),
+            CargarEstadosEquipoAsync(),
+            CargarReportesDaniosAsync(),
+            CargarEquiposAsync(),
+            CargarProveedoresAsync(),
+            CargarUsuariosAsync(),
+            CargarMunicipiosAsync(),
+            CargarDevolucionesAsync(),
+            CargarPrestamosAsync(),
+            CargarRegistrosUsuarioAsync()
+        );
     }
     
     private void AddItem()
@@ -241,7 +269,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged
             }
         }
     }
-
+    
 
 
     private async void OnTabSelectionChanged(object? sender, SelectionChangedEventArgs e)
