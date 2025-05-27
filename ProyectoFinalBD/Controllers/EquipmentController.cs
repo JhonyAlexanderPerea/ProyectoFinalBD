@@ -26,5 +26,24 @@ namespace ProyectoFinalBD.Controllers
         {
             await _repository.Create(equipment);
         }
+        
+
+        public async Task EliminarEquipo(string equipoEquipmentId)
+        {
+            try
+            {
+                await _repository.Delete(equipoEquipmentId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL EQUIPO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL EQUIPO");
+                Console.ResetColor();               
+            } 
+            ;
+        }
     }
 }

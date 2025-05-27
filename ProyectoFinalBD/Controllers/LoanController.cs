@@ -27,5 +27,23 @@ namespace ProyectoFinalBD.Controllers
             await _repository.Create(loan);
 
         }
+
+        public async Task EliminarPrestamo(string prestamoLoanId)
+        {
+            try
+            {
+                await _repository.Delete(prestamoLoanId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL PRESTAMO DE DAÑO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL PRESTAMO");
+                Console.ResetColor();               
+            } 
+            ;  
+        }
     }
 }

@@ -26,5 +26,23 @@ namespace ProyectoFinalBD.Controllers
         {
             await _repository.Create(supplier);
         }
+
+        public async Task EliminarProveedor(string proveedorSupplierId)
+        {
+            try
+            {
+                await _repository.Delete(proveedorSupplierId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL PROVEEDOR HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL PROVEEDOR");
+                Console.ResetColor();               
+            } 
+            ;
+        }
     }
 }

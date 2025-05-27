@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -6,6 +7,7 @@ using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
@@ -280,73 +282,344 @@ namespace ProyectoFinalBD.View
             button.Click += (s, e) => dialog.Close();
             await dialog.ShowDialog(this);
         }
-
-
+            
+        
+        
         private async Task ValidateFields(string entityName, List<string> values)
+{
+    var fields = GetEntityFields(entityName);
+    
+    for (int i = 0; i < fields.Count; i++)
+    {
+        var (name, type, maxLength) = fields[i];
+        var value = values[i];
+        
+
+        // Validaciones específicas por entidad y campo
+        switch (entityName)
         {
-            var fields = GetEntityFields(entityName);
-            for (int i = 0; i < fields.Count; i++)
-            {
-                var (name, type, maxLength) = fields[i];
-                var value = values[i];
+            case "Location":
+                ValidateUbicacion(name, value, maxLength);
+                break;
+                
+            case "EquipmentStatus":
+                ValidateEstadoEquipo(name, value, maxLength);
+                break;
+                
+            case "EquipmentType":
+                ValidateTipoEquipo(name, value, maxLength);
+                break;
+                
+            case "Municipality":
+                ValidateMunicipio(name, value, maxLength);
+                break;
+                
+            case "Supplier":
+                ValidateProveedor(name, value, maxLength);
+                break;
+                
+            case "Equipment":
+                ValidateEquipo(name, value, maxLength);
+                break;
+                
+            case "User":
+                ValidateUsuario(name, value, maxLength);
+                break;
+                
+            case "DamageReport":
+                ValidateDanio(name, value, maxLength);
+                break;
+                
+            case "Maintenance":
+                ValidateMantenimiento(name, value, maxLength);
+                break;
+                
+            case "Loan":
+                ValidatePrestamo(name, value, maxLength);
+                break;
+                
+            case "Return":
+                ValidateDevolucion(name, value, maxLength);
+                break;
+                
+            case "UserLog":
+                ValidateLogUsuario(name, value, maxLength);
+                break;
+                
+            default:
+                throw new ArgumentException($"Entidad desconocida: {entityName}");
+        }
+    }
+            
+}
+            private void ValidateDanio(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoDanio":
+                ValidateStringField(value, 10, "codigoDanio");
+                break;
+            case "fechaDanio":
+                if (!DateTime.TryParse(value, out _))
+                    throw new ArgumentException("La fecha del daño debe ser una fecha válida");
+                break;
+            case "causaDanio":
+                ValidateStringField(value, 100, "causaDanio");
+                break;
+            case "equipo":
+                ValidateStringField(value, 10, "equipo");
+                break;
+        }
+    }
 
-                // Validar campos NOT NULL
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    // Excepciones para campos que permiten NULL en la BD
-                    var nullableFields = new Dictionary<string, List<string>>
-                    {
-                        { "DamageReport", new List<string> { "descripcionDanio" } },
-                        { "Maintenance", new List<string> { "hallazgosMantenimiento" } },
-                        { "Return", new List<string> { "pagoMulta" } },
-                        { "Supplier", new List<string> { "municipio" } },
-                        { "User", new List<string> { "rolUsuario", "municipio" } },
-                        { "Equipment", new List<string> { "tipoEquipo", "ubicacion", "estadoEquipo", "proveedor" } }
-                    };
-
-                    if (!(nullableFields.ContainsKey(entityName) && nullableFields[entityName].Contains(name)))
-                    {
-                        throw new ArgumentException($"El campo {name} es obligatorio");
-                    }
-                }
-
-                // Validar tipos de datos
-                if (type == typeof(DateTime))
-                {
+    private void ValidatePrestamo(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoPrestamo":
+                ValidateStringField(value, 10, "codigoPrestamo");
+                break;
+            case "fechaPrestamo":
+                case "fechaLimitePrestamo":
                     if (!DateTime.TryParse(value, out _))
-                        throw new ArgumentException($"El campo {name} debe ser una fecha válida (YYYY-MM-DD)");
-                }
-                else if (type == typeof(decimal) || type == typeof(decimal?))
-                {
-                    if (!decimal.TryParse(value, out _))
-                        throw new ArgumentException($"El campo {name} debe ser un número decimal válido");
-                }
-                else if (type == typeof(int))
-                {
-                    if (!int.TryParse(value, out _))
-                        throw new ArgumentException($"El campo {name} debe ser un número entero válido");
-                }
+                        throw new ArgumentException($"El campo {name} debe ser una fecha válida");
+                    break;
+            case "costoMultaPrestamo":
+                if (!decimal.TryParse(value, out decimal multa) || multa < 0)
+                    throw new ArgumentException("El costo de multa debe ser un número positivo");
+                break;
+            case "equipo":
+            case "usuario":
+                ValidateStringField(value, 10, name);
+                break;
+        }
+    }
 
-                // Validar longitud máxima
-                if (maxLength.HasValue && value != null && value.Length > maxLength.Value)
-                {
-                    throw new ArgumentException($"El campo {name} no puede exceder {maxLength} caracteres");
-                }
+    private void ValidateDevolucion(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoDevolution":
+                ValidateStringField(value, 10, "codigoDevolution");
+                break;
+            case "fechaDevolution":
+                if (!DateTime.TryParse(value, out _))
+                    throw new ArgumentException("La fecha de devolución debe ser válida");
+                break;
+            case "pagoMulta":
+                decimal multa = 0;
+                if (!string.IsNullOrEmpty(value) && (!decimal.TryParse(value, out multa) || multa < 0))
+                    throw new ArgumentException("El pago de multa debe ser un número positivo");
+                break;
+            case "prestamo":
+                ValidateStringField(value, 10, "prestamo");
+                break;
+        }
+    }
 
-                // Validaciones especiales
-                if (name.EndsWith("correo") || name.EndsWith("email")) // Para correoUser y correoProveedor
-                {
-                    if (!value.Contains("@") || !value.Contains("."))
-                        throw new ArgumentException($"El campo {name} debe ser un email válido");
-                }
+    private void ValidateLogUsuario(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoLogUser":
+                ValidateStringField(value, 10, "codigoLogUser");
+                break;
+            case "fecha":
+                if (!DateTime.TryParse(value, out _))
+                    throw new ArgumentException("La fecha del log debe ser válida");
+                break;
+            case "usuario":
+                ValidateStringField(value, 10, "usuario");
+                break;
+        }
+    }
 
-                if (name == "garantiaGenMesProveedor" && int.TryParse(value, out int months))
+    private void ValidateMunicipio(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoMunicipio":
+                ValidateStringField(value, 10, "codigoMunicipio");
+                break;
+            case "nombreMunicipio":
+                ValidateStringField(value, 50, "nombreMunicipio");
+                break;
+        }
+    }
+
+    private void ValidateTipoEquipo(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoTipoEquipo":
+                ValidateStringField(value, 10, "codigoTipoEquipo");
+                break;
+            case "nombreTipoEquipo":
+                ValidateStringField(value, 50, "nombreTipoEquipo");
+                break;
+        }
+    }
+
+    private void ValidateRolUsuario(string name, string value, int? maxLength)
+    {
+        switch (name)
+        {
+            case "codigoRolUsuario":
+                ValidateStringField(value, 10, "codigoRolUsuario");
+                break;
+            case "nombreRolUsuario":
+                ValidateStringField(value, 50, "nombreRolUsuario");
+                break;
+        }
+    }
+
+            private bool IsNullableField(string entityName, string fieldName)
+            {
+                return entityName switch
                 {
-                    if (months < 0)
-                        throw new ArgumentException("La garantía no puede ser negativa");
+                    "Danio" => fieldName == "descripcionDanio",
+                    "Mantenimiento" => fieldName == "hallazgosMantenimiento" || fieldName == "equipo",
+                    "Devolucion" => fieldName == "pagoMulta",
+                    "Proveedor" => fieldName == "municipio",
+                    "Usuario" => fieldName == "rolUsuario" || fieldName == "municipio",
+                    "Equipo" => fieldName == "tipoEquipo" || fieldName == "ubicacion" || 
+                                fieldName == "estadoEquipo" || fieldName == "proveedor",
+                    _ => false
+                };
+            }
+
+            // Métodos de validación específicos para cada entidad
+            private void ValidateUbicacion(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoUbicacion":
+                        ValidateStringField(value, 10, "codigoUbicacion");
+                        break;
+                    case "lugarUbicacion":
+                        ValidateStringField(value, 50, "lugarUbicacion");
+                        break;
                 }
             }
-        }
+
+            private void ValidateEstadoEquipo(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoEstadoEquipo":
+                        ValidateStringField(value, 10, "codigoEstadoEquipo");
+                        break;
+                    case "nombreEstadoEquipo":
+                        ValidateStringField(value, 50, "nombreEstadoEquipo");
+                        break;
+                }
+            }
+
+            private void ValidateProveedor(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoProveedor":
+                        ValidateStringField(value, 10, "codigoProveedor");
+                        break;
+                    case "nombreProveedor":
+                        ValidateStringField(value, 50, "nombreProveedor");
+                        break;
+                    case "noContactoProveedor":
+                        ValidateStringField(value, 15, "noContactoProveedor");
+                        break;
+                    case "correoProveedor":
+                        ValidateStringField(value, 50, "correoProveedor");
+                        if (!value.Contains("@") || !value.Contains("."))
+                            throw new ArgumentException("El correo debe tener formato válido");
+                        break;
+                    case "garantiaGenMesProveedor":
+                        if (!int.TryParse(value, out int meses) || meses < 0)
+                            throw new ArgumentException("La garantía debe ser un número entero positivo");
+                        break;
+                    case "municipio":
+                        ValidateStringField(value, 10, "municipio");
+                        break;
+                }
+            }
+
+            private void ValidateEquipo(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoEquipo":
+                        ValidateStringField(value, 10, "codigoEquipo");
+                        break;
+                    case "nombreEquipo":
+                        ValidateStringField(value, 50, "nombreEquipo");
+                        break;
+                    case "costoEquipo":
+                        if (!decimal.TryParse(value, out decimal costo) || costo < 0)
+                            throw new ArgumentException("El costo debe ser un número positivo");
+                        break;
+                    case "tipoEquipo":
+                    case "ubicacion":
+                    case "estadoEquipo":
+                    case "proveedor":
+                        ValidateStringField(value, 10, name);
+                        break;
+                }
+            }
+
+            private void ValidateUsuario(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoUser":
+                        ValidateStringField(value, 10, "codigoUser");
+                        break;
+                    case "nombreUser":
+                        ValidateStringField(value, 50, "nombreUser");
+                        break;
+                    case "correoUser":
+                        ValidateStringField(value, 50, "correoUser");
+                        if (!value.Contains("@") || !value.Contains("."))
+                            throw new ArgumentException("El correo debe tener formato válido");
+                        break;
+                    case "rolUsuario":
+                    case "municipio":
+                        ValidateStringField(value, 10, name);
+                        break;
+                }
+            }
+
+            private void ValidateMantenimiento(string name, string value, int? maxLength)
+            {
+                switch (name)
+                {
+                    case "codigoMantenimiento":
+                        ValidateStringField(value, 10, "codigoMantenimiento");
+                        break;
+                    case "fechaMantenimiento":
+                        if (!DateTime.TryParse(value, out _))
+                            throw new ArgumentException("Fecha inválida");
+                        break;
+                    case "costoMantenimiento":
+                        if (!decimal.TryParse(value, out decimal costo) || costo < 0)
+                            throw new ArgumentException("El costo debe ser un número positivo");
+                        break;
+                    case "equipo":
+                        ValidateStringField(value, 10, "equipo");
+                        break;
+                }
+            }
+
+            // Método auxiliar para validar campos string
+            private void ValidateStringField(string value, int maxLength, string fieldName)
+            {
+                if (value.Length > maxLength)
+                    throw new ArgumentException($"El campo {fieldName} no puede exceder {maxLength} caracteres");
+            }
+        
+       
+        
+        
+        
 
         private List<(string Name, Type Type, int? MaxLength)> GetEntityFields(string entityName)
     {
@@ -627,26 +900,36 @@ namespace ProyectoFinalBD.View
                         break;
             
                     case "Maintenance":
-                        var maintenance = new Maintenance
+                        var maintenance = new Maintenance()
                         {
                             MaintenanceId = values[0],
-                            Date = DateTime.Parse(values[1]),
+                            Date = DateTime.Parse(values[1], CultureInfo.InvariantCulture),
                             Findings = values[2],
-                            Cost = decimal.Parse(values[3]),
+                            Cost = decimal.Parse(values[3], CultureInfo.InvariantCulture),
                             EquipmentId = values[4]
                         };
                         try
                         {
+                            Console.WriteLine($"Intentando crear mantenimiento: ID={maintenance.MaintenanceId}, " +
+                                             $"Fecha={maintenance.Date}, " +
+                                             $"Hallazgos={maintenance.Findings}, " +
+                                             $"Costo={maintenance.Cost}, " +
+                                             $"EquipoID={maintenance.EquipmentId}");
+                         
                             await _maintenanceController.crearMantenimiento(maintenance);
                             await ShowMessage("Éxito", "El mantenimiento se ha creado correctamente.");
                         }
                         catch (OracleException ex)
                         {
+                            Console.WriteLine($"Error de Oracle: {ex.Message}");
+                            Console.WriteLine($"Código de error: {ex.Number}");
                             await ShowError("Error de Base de Datos", 
                                 $"Error al crear el mantenimiento en la base de datos: {ex.Message}");
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine($"Error general: {ex.Message}");
+                            Console.WriteLine($"Stack trace: {ex.StackTrace}");
                             await ShowError("Error", $"Error al crear el mantenimiento: {ex.Message}");
                         }
 
@@ -677,30 +960,54 @@ namespace ProyectoFinalBD.View
                         break;
             
                     case "Return":
-                        var return_ = new Return
-                        {
-                            ReturnId = values[0],
-                            Date = DateTime.Parse(values[1]),
-                            Notes = values[2],
-                            PenaltyPaid = decimal.Parse(values[3]),
-                            LoanId = values[4]
-                        };
-                        try
-                        {
-                            await _returnController.createReturn(return_);
-                            await ShowMessage("Éxito", "La devolución se ha creado correctamente.");
-                        }
-                        catch (OracleException ex)
-                        {
-                            await ShowError("Error de Base de Datos", 
-                                $"Error al crear la devolución en la base de datos: {ex.Message}");
-                        }
-                        catch (Exception ex)
-                        {
-                            await ShowError("Error", $"Error al crear la devolución: {ex.Message}");
-                        }
+                try
+                {
+                    // Validaciones previas
+                    if (string.IsNullOrWhiteSpace(values[0]))
+                        throw new ArgumentException("El ID de devolución es obligatorio");
+        
+                    if (values[0].Length > 10)
+                        throw new ArgumentException("El ID no puede exceder 10 caracteres");
 
-                        break;
+                    if (string.IsNullOrWhiteSpace(values[2]))
+                        throw new ArgumentException("Las observaciones son obligatorias");
+
+                    if (string.IsNullOrWhiteSpace(values[4]))
+                        throw new ArgumentException("El préstamo asociado es obligatorio");
+
+                    var return_ = new Return
+                    {
+                        ReturnId = values[0],
+                        Date = DateTime.ParseExact(values[1], "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        Notes = values[2],
+                        PenaltyPaid = string.IsNullOrWhiteSpace(values[3]) ? null : decimal.Parse(values[3]),
+                        LoanId = values[4]
+                    };
+
+                    await _returnController.createReturn(return_);
+                    await ShowMessage("Éxito", "Devolución registrada correctamente");
+                }
+                catch (OracleException ex) when (ex.Number == 1)
+                {
+                    await ShowError("Error", $"Ya existe una devolución con el ID {values[0]}");
+                }
+                catch (OracleException ex) when (ex.Number == 2291)
+                {
+                    await ShowError("Error", $"El préstamo {values[4]} no existe en la base de datos");
+                }
+                catch (FormatException)
+                {
+                    await ShowError("Error de Formato", "Revise el formato de la fecha (debe ser DD/MM/AAAA) o del valor de penalización");
+                }
+                catch (ArgumentException ex)
+                {
+                    await ShowError("Error de Validación", ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    await ShowError("Error Inesperado", $"Detalle técnico: {ex.Message}");
+                }
+                break;
             
                     case "Supplier":
                         var supplier = new Supplier
@@ -786,4 +1093,3 @@ namespace ProyectoFinalBD.View
         }
     }
 } 
-

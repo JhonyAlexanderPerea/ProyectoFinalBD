@@ -22,10 +22,28 @@ namespace ProyectoFinalBD.Controllers
             return lista ?? new List<Return>();
         }
 
-        public async Task createReturn(Return @return)
+        public async Task createReturn(Return returnObj)
         {
-            await _repository.Create(@return);
+            await _repository.Create(returnObj);
 
             }
+
+        public async Task EliminarDevolucion(string devolucionReturnId)
+        {
+            try
+            {
+                await _repository.Delete(devolucionReturnId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("LA DEVOLUCIÓN DE DAÑO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR LA DEVOLUCIÓN");
+                Console.ResetColor();               
+            } 
+            ;  
+        }
     }
 }

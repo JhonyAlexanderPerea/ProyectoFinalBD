@@ -27,5 +27,22 @@ namespace ProyectoFinalBD.Controllers
             await _repository.Create(municipality);
 
         }
+
+        public async Task EliminarMunicipio(string municipioMunicipalityId)
+        {
+            try
+            {
+                await _repository.Delete(municipioMunicipalityId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL MUNICIPO DE DAÑO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL MUNICIPO");
+                Console.ResetColor();               
+            } 
+            ;        }
     }
 }

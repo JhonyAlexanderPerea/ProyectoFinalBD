@@ -18,7 +18,7 @@ using Location = ProyectoFinalBD.Model.Location;
 
 namespace ProyectoFinalBD.View;
 
-public partial class Entities : UserControl, INotifyPropertyChanged
+public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveObject
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -37,17 +37,26 @@ public partial class Entities : UserControl, INotifyPropertyChanged
     private ObservableCollection<UserLog> _userLogs = new();
     private ObservableCollection<UserRole> _userRoles = new();
     
+    private object _selectedItem;
+    private IReactiveObject _reactiveObjectImplementation;
+
+    public object SelectedItem
+    {
+        get => _selectedItem;
+        set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
+    }
+    
     public ReactiveCommand<Unit, Unit> AddCommand { get; }
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
-    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
-
+    
     public ReactiveCommand<string, Unit> CreateCommand { get; }
     public Entities()
     {
         InitializeComponent();
         AddCommand = ReactiveCommand.Create(AddItem);
         EditCommand = ReactiveCommand.Create(EditItem);
-        DeleteCommand = ReactiveCommand.Create(DeleteItem);
+
+    
         CreateCommand = ReactiveCommand.CreateFromTask<string>(CreateEntityAsync);
         DataContext = this;
 
@@ -111,10 +120,103 @@ public partial class Entities : UserControl, INotifyPropertyChanged
     {
         Console.WriteLine("Editar ítem");
     }
-
-    private void DeleteItem()
+    
+    
+    public async Task DeleteItem(string entityType)
     {
-        Console.WriteLine("Eliminar ítem");
+        if (_selectedItem == null)
+        {
+            await ShowMessage("Error", "Por favor, seleccione un elemento para eliminar.");
+            return;
+        }
+
+        bool confirmDelete = await ShowConfirmation("Confirmar Eliminación", 
+            "¿Está seguro que desea eliminar este elemento? Esta acción no se puede deshacer.");
+
+        if (!confirmDelete) return;
+
+        try
+        {
+            switch (entityType)
+            {
+                case "Maintenance":
+                    var mantenimiento = (Maintenance)_selectedItem;
+                    await new MaintenanceController().EliminarMantenimiento(mantenimiento.MaintenanceId);
+                    CargarMantenimientosAsync();
+                    break;
+
+                case "EquipmentType":
+                    var tipoEquipo = (EquipmentType)_selectedItem;
+                    await new EquipmentTypeController().EliminarTipoEquipo(tipoEquipo.EquipmentTypeId);
+                    CargarTiposEquipoAsync();
+                    break;
+
+                case "Location":
+                    var ubicacion = (Location)_selectedItem;
+                    await new LocationController().EliminarUbicacion(ubicacion.LocationId);
+                    CargarUbicacionesAsync();
+                    break;
+
+                case "Equipment":
+                    var equipo = (Equipment)_selectedItem;
+                    await new EquipmentController().EliminarEquipo(equipo.EquipmentId);
+                    CargarEquiposAsync();
+                    break;
+
+                case "DamageReport":
+                    var reporte = (DamageReport)_selectedItem;
+                    await new DamageReportController().EliminarReporteDaño(reporte.DamageReportId);
+                    CargarReportesDaniosAsync();
+                    break;
+
+                case "Supplier":
+                    var proveedor = (Supplier)_selectedItem;
+                    await new SupplierController().EliminarProveedor(proveedor.SupplierId);
+                    CargarProveedoresAsync();
+                    break;
+
+                case "User":
+                    var usuario = (User)_selectedItem;
+                    await new UserController().EliminarUsuario(usuario.UserId);
+                    CargarUsuariosAsync();
+                    break;
+
+                case "Municipality":
+                    var municipio = (Municipality)_selectedItem;
+                    await new MunicipalityController().EliminarMunicipio(municipio.MunicipalityId);
+                    CargarMunicipiosAsync();
+                    break;
+
+                case "Return":
+                    var devolucion = (Return)_selectedItem;
+                    await new ReturnController().EliminarDevolucion(devolucion.ReturnId);
+                    CargarDevolucionesAsync();
+                    break;
+
+                case "Loan":
+                    var prestamo = (Loan)_selectedItem;
+                    await new LoanController().EliminarPrestamo(prestamo.LoanId);
+                    CargarPrestamosAsync();
+                    break;
+
+                case "UserLog":
+                    var registro = (UserLog)_selectedItem;
+                    await new UserLogController().EliminarRegistro(registro.UserLogId);
+                    CargarRegistrosUsuarioAsync();
+                    break;
+
+                default:
+                    await ShowMessage("Error", "Tipo de entidad no soportado.");
+                    return;
+            }
+
+            await ShowMessage("Éxito", "El elemento ha sido eliminado correctamente.");
+            _selectedItem = null;
+        }
+        catch (Exception ex)
+        {
+            await ShowError("Error", $"Error al eliminar el elemento: {ex.Message}");
+        }
     }
 
     public ObservableCollection<EquipmentStatus> EquipmentStatus
@@ -960,4 +1062,19 @@ public partial class Entities : UserControl, INotifyPropertyChanged
     private Window GetWindow() => (Window)this.VisualRoot!;
 
 
+    public event PropertyChangingEventHandler? PropertyChanging
+    {
+        add => _reactiveObjectImplementation.PropertyChanging += value;
+        remove => _reactiveObjectImplementation.PropertyChanging -= value;
+    }
+
+    public void RaisePropertyChanging(PropertyChangingEventArgs args)
+    {
+        _reactiveObjectImplementation.RaisePropertyChanging(args);
+    }
+
+    public void RaisePropertyChanged(PropertyChangedEventArgs args)
+    {
+        _reactiveObjectImplementation.RaisePropertyChanged(args);
+    }
 }

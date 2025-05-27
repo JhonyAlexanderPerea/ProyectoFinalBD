@@ -26,5 +26,23 @@ namespace ProyectoFinalBD.Controllers
         {
             await _repository.Create(userLog);
         }
+
+        public async Task EliminarRegistro(string registroUserLogId)
+        {
+            try
+            {
+                await _repository.Delete(registroUserLogId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL LOG DE DAÑO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL LOG");
+                Console.ResetColor();               
+            } 
+            ;  
+        }
     }
 }

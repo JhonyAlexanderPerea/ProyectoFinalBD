@@ -74,35 +74,75 @@ namespace ProyectoFinalBD.DAO
 
             return null;
         }
+       public async Task Create(Return devolucion)
+{
+    // Validaciones básicas
+    if (string.IsNullOrWhiteSpace(devolucion.ReturnId))
+        throw new ArgumentException("El código de devolución es obligatorio");
+    
+    if (devolucion.ReturnId.Length > 10)
+        throw new ArgumentException("El código no puede exceder 10 caracteres");
 
-        public async Task Create(Return returnObj)
-        {
-            if (returnObj == null)
-                throw new ArgumentNullException(nameof(returnObj));
+    if (string.IsNullOrWhiteSpace(devolucion.Notes))
+        throw new ArgumentException("Las observaciones son obligatorias");
 
-            if (string.IsNullOrEmpty(returnObj.ReturnId))
-                throw new ArgumentException("ReturnId no puede ser nulo o vacío", nameof(returnObj.ReturnId));
+    if (string.IsNullOrWhiteSpace(devolucion.LoanId))
+        throw new ArgumentException("El préstamo asociado es obligatorio");
 
-            if (string.IsNullOrEmpty(returnObj.LoanId))
-                throw new ArgumentException("LoanId no puede ser nulo o vacío", nameof(returnObj.LoanId));
+    using var connection = new OracleConnection(_connectionString);
+    
+    const string query = @"
+        INSERT INTO DEVOLUCION (
+            CODIGODEVOLUTION,      -- VARCHAR2(10)
+            FECHADEVOLUTION,       -- DATE
+            OBSERVACIONESDEVOLUTION, -- CLOB NOT NULL
+            PAGOMULTA,            -- NUMBER(15,2) NULL
+            PRESTAMO              -- VARCHAR2(10) NOT NULL
+        ) VALUES (
+            :CodigoDevolucion,
+            TO_DATE(:FechaDevolucion, 'DD/MM/YYYY'),
+            :Observaciones,
+            :PagoMulta,
+            :PrestamoId
+        )";
 
-            using var connection = new OracleConnection(_connectionString);
-            const string query = @"
-                INSERT INTO Devolucion 
-                (codigoDevolution, fechaDevolution, observacionesDevolution, pagoMulta, prestamo) 
-                VALUES 
-                (:returnId, :date, :notes, :penaltyPaid, :loanId)";
+    try
+    {
+        await connection.OpenAsync();
+        
+        using var command = new OracleCommand(query, connection);
+        
+        // Parámetros exactamente como en la consulta SQL
+        command.Parameters.Add("CodigoDevolucion", OracleDbType.Varchar2, 10).Value = devolucion.ReturnId;
+        
+        command.Parameters.Add("FechaDevolucion", OracleDbType.Varchar2).Value = 
+            devolucion.Date.ToString("dd/MM/yyyy");
+        
+        command.Parameters.Add("Observaciones", OracleDbType.Clob).Value = 
+            devolucion.Notes ?? (object)DBNull.Value;
+        
+        command.Parameters.Add("PagoMulta", OracleDbType.Decimal, 15).Value = 
+            devolucion.PenaltyPaid ?? (object)DBNull.Value;
+        command.Parameters["PagoMulta"].Scale = 2; // Para NUMBER(15,2)
+        
+        command.Parameters.Add("PrestamoId", OracleDbType.Varchar2, 10).Value = 
+            devolucion.LoanId;
 
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
-            command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Clob).Value = (object?)returnObj.Notes ?? DBNull.Value;
-            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
-            command.Parameters.Add("loanId", OracleDbType.Varchar2).Value = returnObj.LoanId;
-
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-        }
+        await command.ExecuteNonQueryAsync();
+    }
+    catch (OracleException ex) when (ex.Number == 1)
+    {
+        throw new Exception($"Ya existe una devolución con código {devolucion.ReturnId}", ex);
+    }
+    catch (OracleException ex) when (ex.Number == 2291)
+    {
+        throw new Exception($"No existe el préstamo {devolucion.LoanId}", ex);
+    }
+    catch (OracleException ex)
+    {
+        throw new Exception($"Error Oracle (Code: {ex.Number}): {ex.Message}", ex);
+    }
+}
 
         public async Task Update(Return returnObj)
         {

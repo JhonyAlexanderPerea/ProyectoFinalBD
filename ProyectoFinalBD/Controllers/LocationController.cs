@@ -26,5 +26,23 @@ namespace ProyectoFinalBD.Controllers
         {
             await _repository.Create(location);
         }
+
+        public async Task EliminarUbicacion(string ubicacionLocationId)
+        {
+            try
+            {
+                await _repository.Delete(ubicacionLocationId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("LA UBICACIÓN HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR LA UBICACIÓN");
+                Console.ResetColor();               
+            } 
+            ;
+        }
     }
 }

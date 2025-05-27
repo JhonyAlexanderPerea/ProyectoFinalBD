@@ -40,5 +40,23 @@ namespace ProyectoFinalBD.Controllers
                 return null;
             }
         }
+
+        public async Task EliminarMantenimiento(string mantenimientoMaintenanceId)
+        {
+            try
+            {
+                await _repository.Delete(mantenimientoMaintenanceId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("EL MANTENIMIENTO HA SIDO ELIMINADO CORRECTAMENTE");
+                Console.ResetColor(); 
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL MANTENIMIENTO");
+                Console.ResetColor(); 
+                
+            }
+        }
     }
 }

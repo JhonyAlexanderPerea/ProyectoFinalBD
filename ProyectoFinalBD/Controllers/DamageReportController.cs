@@ -25,4 +25,22 @@ public class DamageReportController
     {
         await _repository.Create(damageReport);
     }
+
+    public async Task EliminarReporteDaño(string reporteDamageReportId)
+    {
+        try
+        {
+            await _repository.Delete(reporteDamageReportId);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("EL REPORTE DE DAÑO HA SIDO ELIMINADO CORRECTAMENTE");
+            Console.ResetColor(); 
+        }
+        catch(Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("HUBO UN ERROR AL INTENTAR ELIMINAR EL REPORTE DE DAÑO");
+            Console.ResetColor();               
+        } 
+        ;
+    }
 }
