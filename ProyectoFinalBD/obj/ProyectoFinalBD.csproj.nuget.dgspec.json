@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj": {}
+    "/home/jhony/Documentos/GitHub/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj": {}
   },
   "projects": {
-    "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj": {
+    "/home/jhony/Documentos/GitHub/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj",
+        "projectUniqueName": "/home/jhony/Documentos/GitHub/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj",
         "projectName": "ProyectoFinalBD",
-        "projectPath": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\ProyectoFinalBD.csproj",
-        "packagesPath": "C:\\Users\\santi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\santi\\RiderProjects\\ProyectoFinalBD\\ProyectoFinalBD\\obj\\",
+        "projectPath": "/home/jhony/Documentos/GitHub/ProyectoFinalBD/ProyectoFinalBD/ProyectoFinalBD.csproj",
+        "packagesPath": "/home/jhony/.nuget/packages/",
+        "outputPath": "/home/jhony/Documentos/GitHub/ProyectoFinalBD/ProyectoFinalBD/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\santi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+          "/home/jhony/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -40,9 +36,9 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -127,7 +123,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\santi\\.dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/jhony/.dotnet/sdk/9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

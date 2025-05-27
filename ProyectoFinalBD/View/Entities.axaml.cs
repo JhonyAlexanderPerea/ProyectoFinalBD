@@ -7,11 +7,13 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Threading;
 using System.Linq;
+using System.Reactive;
 using ProyectoFinalBD.Controllers;
 using ProyectoFinalBD.Model;
 using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
+using ReactiveUI;
 using Location = ProyectoFinalBD.Model.Location;
 
 namespace ProyectoFinalBD.View;
@@ -34,7 +36,40 @@ public partial class Entities : UserControl, INotifyPropertyChanged
     private ObservableCollection<UserLog> _userLogs = new();
     private ObservableCollection<UserRole> _userRoles = new();
 
+    
+    
+    public ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public ReactiveCommand<Unit, Unit> EditCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
+    
+    public Entities()
+    {
+        InitializeComponent();
+
+        AddCommand = ReactiveCommand.Create(AddItem);
+        EditCommand = ReactiveCommand.Create(EditItem);
+        DeleteCommand = ReactiveCommand.Create(DeleteItem);
+        DataContext = this;
+
+        Loaded += async (s, e) => await CargarMantenimientosAsync();
+    }
+    
+    private void AddItem()
+    {
+        // Ejemplo: abrir ventana para agregar un nuevo mantenimiento, etc.
+        Console.WriteLine("Agregar ítem");
+    }
+
+    private void EditItem()
+    {
+        Console.WriteLine("Editar ítem");
+    }
+
+    private void DeleteItem()
+    {
+        Console.WriteLine("Eliminar ítem");
+    }
 
     public ObservableCollection<EquipmentStatus> EquipmentStatus
     {
@@ -207,14 +242,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged
         }
     }
 
-    public Entities()
-    {
-        InitializeComponent();
-        DataContext = this;
 
-        
-        Loaded += async (s, e) => await CargarMantenimientosAsync();
-    }
 
     private async void OnTabSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
