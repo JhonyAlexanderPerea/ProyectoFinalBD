@@ -21,5 +21,10 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} ubicaciones");
             return lista ?? new List<Location>();
         }
+
+        public async Task createLocation(Location location)
+        {
+            await _repository.Create(location);
+        }
     }
 }

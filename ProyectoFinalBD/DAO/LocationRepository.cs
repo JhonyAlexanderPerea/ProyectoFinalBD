@@ -102,9 +102,8 @@ namespace ProyectoFinalBD.DAO
             return new Location
             {
                 LocationId = reader["CODIGOUBICACION"].ToString()!,
-                Name = reader["LUGARUBICACION"].ToString()!
+                Name = reader["NOMBREUBICACION"].ToString()! // <- corregido aquí
             };
         }
-
     }
 }

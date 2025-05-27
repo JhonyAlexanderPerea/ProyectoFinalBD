@@ -21,5 +21,11 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} préstamos");
             return lista ?? new List<Loan>();
         }
+
+        public async Task createLoan(Loan loan)
+        {
+            await _repository.Create(loan);
+
+        }
     }
 }

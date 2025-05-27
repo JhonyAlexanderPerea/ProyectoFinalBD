@@ -37,10 +37,10 @@ namespace ProyectoFinalBD.DAO
             return statuses;
         }
 
-        public async Task<EquipmentStatus> GetById(string statusId)
+        public async Task<EquipmentStatus?> GetById(string statusId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM EstadoEquipo WHERE codigoEstado = :statusId";
+            const string query = "SELECT codigoEstadoEquipo, nombreEstadoEquipo FROM EstadoEquipo WHERE codigoEstadoEquipo = :statusId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = statusId;
@@ -52,8 +52,8 @@ namespace ProyectoFinalBD.DAO
             {
                 return new EquipmentStatus
                 {
-                    EquipmentStatusId = reader["codigoEstado"].ToString()!,
-                    Name = reader["nombreEstado"].ToString()!
+                    EquipmentStatusId = reader["codigoEstadoEquipo"].ToString()!,
+                    Name = reader["nombreEstadoEquipo"].ToString()!
                 };
             }
 
@@ -65,7 +65,7 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO EstadoEquipo 
-                (codigoEstado, nombreEstado) 
+                (codigoEstadoEquipo, nombreEstadoEquipo) 
                 VALUES 
                 (:statusId, :name)";
 
@@ -82,8 +82,8 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE EstadoEquipo 
-                SET nombreEstado = :name 
-                WHERE codigoEstado = :statusId";
+                SET nombreEstadoEquipo = :name 
+                WHERE codigoEstadoEquipo = :statusId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("name", OracleDbType.Varchar2).Value = status.Name;
@@ -96,7 +96,7 @@ namespace ProyectoFinalBD.DAO
         public async Task Delete(string statusId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM EstadoEquipo WHERE codigoEstado = :statusId";
+            const string query = "DELETE FROM EstadoEquipo WHERE codigoEstadoEquipo = :statusId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = statusId;
@@ -108,7 +108,7 @@ namespace ProyectoFinalBD.DAO
         public async Task<bool> Exists(string statusId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT COUNT(1) FROM EstadoEquipo WHERE codigoEstado = :statusId";
+            const string query = "SELECT COUNT(1) FROM EstadoEquipo WHERE codigoEstadoEquipo = :statusId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = statusId;

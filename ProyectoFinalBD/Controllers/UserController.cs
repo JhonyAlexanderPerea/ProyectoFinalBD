@@ -46,4 +46,10 @@ public class UserController
     {
         _currentUser = null;
     }
+
+    public async Task createUser(User user)
+    {
+        await _repository.CreateUser(user);
+
+    }
 }

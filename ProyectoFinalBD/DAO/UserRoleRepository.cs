@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 using ProyectoFinalBD.Model;
@@ -17,90 +18,132 @@ namespace ProyectoFinalBD.DAO
         public async Task<List<UserRole>> GetAll()
         {
             var roles = new List<UserRole>();
-            using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM RolUsuario";
 
-            using var command = new OracleCommand(query, connection);
-            await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try
             {
-                roles.Add(MapUserRoleFromReader(reader));
+                using var connection = new OracleConnection(_connectionString);
+                const string query = "SELECT * FROM RolUsuario";
+
+                using var command = new OracleCommand(query, connection);
+                await connection.OpenAsync();
+                using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    roles.Add(MapUserRoleFromReader(reader));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetAll UserRoles: {ex.Message}");
+                // Aquí podrías lanzar la excepción o manejarla según la necesidad
+                throw;
             }
 
             return roles;
         }
 
-        public async Task<UserRole> GetById(string userRoleId)
+        public async Task<UserRole?> GetById(string userRoleId)
         {
-            using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM RolUsuario WHERE codigoRol = :userRoleId";
-
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRoleId;
-
-            await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
+            try
             {
-                return MapUserRoleFromReader(reader);
-            }
+                using var connection = new OracleConnection(_connectionString);
+                const string query = "SELECT * FROM RolUsuario WHERE codigoRolUsuario = :userRoleId";
 
-            return null;
+                using var command = new OracleCommand(query, connection);
+                command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRoleId;
+
+                await connection.OpenAsync();
+                using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return MapUserRoleFromReader(reader);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetById UserRole: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task Create(UserRole userRole)
         {
-            using var connection = new OracleConnection(_connectionString);
-            const string query = @"
-                INSERT INTO RolUsuario 
-                (codigoRol, nombreRol) 
-                VALUES 
-                (:userRoleId, :name)";
+            try
+            {
+                using var connection = new OracleConnection(_connectionString);
+                const string query = @"
+                    INSERT INTO RolUsuario 
+                    (codigoRolUsuario, nombreRol) 
+                    VALUES 
+                    (:userRoleId, :name)";
 
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRole.UserRoleId;
-            command.Parameters.Add("name", OracleDbType.Varchar2).Value = userRole.Name;
+                using var command = new OracleCommand(query, connection);
+                command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRole.UserRoleId;
+                command.Parameters.Add("name", OracleDbType.Varchar2).Value = userRole.Name;
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Create UserRole: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task Update(UserRole userRole)
         {
-            using var connection = new OracleConnection(_connectionString);
-            const string query = @"
-                UPDATE RolUsuario 
-                SET nombreRol = :name
-                WHERE codigoRol = :userRoleId";
+            try
+            {
+                using var connection = new OracleConnection(_connectionString);
+                const string query = @"
+                    UPDATE RolUsuario 
+                    SET nombreRol = :name
+                    WHERE codigoRolUsuario = :userRoleId";
 
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("name", OracleDbType.Varchar2).Value = userRole.Name;
-            command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRole.UserRoleId;
+                using var command = new OracleCommand(query, connection);
+                command.Parameters.Add("name", OracleDbType.Varchar2).Value = userRole.Name;
+                command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRole.UserRoleId;
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Update UserRole: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task Delete(string userRoleId)
         {
-            using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM RolUsuario WHERE codigoRol = :userRoleId";
+            try
+            {
+                using var connection = new OracleConnection(_connectionString);
+                const string query = "DELETE FROM RolUsuario WHERE codigoRolUsuario = :userRoleId";
 
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRoleId;
+                using var command = new OracleCommand(query, connection);
+                command.Parameters.Add("userRoleId", OracleDbType.Varchar2).Value = userRoleId;
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Delete UserRole: {ex.Message}");
+                throw;
+            }
         }
 
         private static UserRole MapUserRoleFromReader(System.Data.IDataReader reader)
         {
             return new UserRole
             {
-                UserRoleId = reader["codigoRol"].ToString()!,
+                UserRoleId = reader["codigoRolUsuario"].ToString()!,
                 Name = reader["nombreRol"].ToString()!
             };
         }

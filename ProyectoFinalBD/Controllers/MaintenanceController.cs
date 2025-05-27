@@ -21,9 +21,24 @@ namespace ProyectoFinalBD.Controllers
             var lista = await _repository.GetAll();
 
             // Puedes registrar para debug
-            Console.WriteLine(lista == null ? "Repositorio devolvió null" : $"Repositorio devolvió {lista.Count} registros");
+            Console.WriteLine(lista == null
+                ? "Repositorio devolvió null"
+                : $"Repositorio devolvió {lista.Count} registros");
 
             return lista ?? new List<Maintenance>();
+        }
+
+        public async Task<Maintenance> crearMantenimiento(Maintenance mantenimiento) {
+            try
+            {
+                await _repository.Create(mantenimiento);
+                return mantenimiento;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("HUBO UN ERROR AL INTENTAR GUARDAR EL MANTENIMIENTO");
+                return null;
+            }
         }
     }
 }

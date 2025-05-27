@@ -21,5 +21,10 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} proveedores");
             return lista ?? new List<Supplier>();
         }
+
+        public async Task createSupplier(Supplier supplier)
+        {
+            await _repository.Create(supplier);
+        }
     }
 }

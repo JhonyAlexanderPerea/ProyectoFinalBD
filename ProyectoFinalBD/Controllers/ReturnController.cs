@@ -21,5 +21,11 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} devoluciones");
             return lista ?? new List<Return>();
         }
+
+        public async Task createReturn(Return @return)
+        {
+            await _repository.Create(@return);
+
+            }
     }
 }

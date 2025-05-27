@@ -22,18 +22,17 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 SELECT 
-    p.codigoPrestamo,
-    p.fechaPrestamo,
-    p.fechaLimitePrestamo,
-    p.costoMultaPrestamo,
-    p.equipo,
-    p.usuario,
-    e.nombreEquipo AS equipment_name,
-    u.nombreUser AS user_name
-FROM Prestamo p
-JOIN Equipo e ON p.equipo = e.codigoEquipo
-JOIN Usuario u ON p.usuario = u.codigoUser
-";
+                    p.codigoPrestamo,
+                    p.fechaPrestamo,
+                    p.fechaLimitePrestamo,
+                    p.costoMultaPrestamo,
+                    p.equipo,
+                    p.usuario,
+                    e.nombreEquipo AS equipment_name,
+                    u.nombreUsuario AS user_name
+                FROM Prestamo p
+                JOIN Equipo e ON p.equipo = e.codigoEquipo
+                JOIN Usuario u ON p.usuario = u.codigoUsuario";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -51,8 +50,15 @@ JOIN Usuario u ON p.usuario = u.codigoUser
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT p.*, e.nombreEquipo as equipment_name, 
-                       u.nombreUsuario as user_name
+                SELECT 
+                    p.codigoPrestamo,
+                    p.fechaPrestamo,
+                    p.fechaLimitePrestamo,
+                    p.costoMultaPrestamo,
+                    p.equipo,
+                    p.usuario,
+                    e.nombreEquipo AS equipment_name,
+                    u.nombreUsuario AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
                 JOIN Usuario u ON p.usuario = u.codigoUsuario
@@ -77,7 +83,7 @@ JOIN Usuario u ON p.usuario = u.codigoUser
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO Prestamo 
-                (codigoPrestamo, fechaPrestamo, fechaDevolucion, costoPenalizacion, 
+                (codigoPrestamo, fechaPrestamo, fechaLimitePrestamo, costoMultaPrestamo, 
                  equipo, usuario) 
                 VALUES 
                 (:loanId, :date, :dueDate, :penaltyCost, 
@@ -101,8 +107,8 @@ JOIN Usuario u ON p.usuario = u.codigoUser
             const string query = @"
                 UPDATE Prestamo 
                 SET fechaPrestamo = :date,
-                    fechaDevolucion = :dueDate,
-                    costoPenalizacion = :penaltyCost,
+                    fechaLimitePrestamo = :dueDate,
+                    costoMultaPrestamo = :penaltyCost,
                     equipo = :equipmentId,
                     usuario = :userId
                 WHERE codigoPrestamo = :loanId";
@@ -136,8 +142,15 @@ JOIN Usuario u ON p.usuario = u.codigoUser
             var loans = new List<Loan>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT p.*, e.nombreEquipo as equipment_name, 
-                       u.nombreUsuario as user_name
+                SELECT 
+                    p.codigoPrestamo,
+                    p.fechaPrestamo,
+                    p.fechaLimitePrestamo,
+                    p.costoMultaPrestamo,
+                    p.equipo,
+                    p.usuario,
+                    e.nombreEquipo AS equipment_name,
+                    u.nombreUsuario AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
                 JOIN Usuario u ON p.usuario = u.codigoUsuario
@@ -162,8 +175,15 @@ JOIN Usuario u ON p.usuario = u.codigoUser
             var loans = new List<Loan>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT p.*, e.nombreEquipo as equipment_name, 
-                       u.nombreUsuario as user_name
+                SELECT 
+                    p.codigoPrestamo,
+                    p.fechaPrestamo,
+                    p.fechaLimitePrestamo,
+                    p.costoMultaPrestamo,
+                    p.equipo,
+                    p.usuario,
+                    e.nombreEquipo AS equipment_name,
+                    u.nombreUsuario AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
                 JOIN Usuario u ON p.usuario = u.codigoUsuario
@@ -188,15 +208,14 @@ JOIN Usuario u ON p.usuario = u.codigoUser
             return new Loan
             {
                 LoanId = reader["CODIGOPRESTAMO"].ToString()!,
-                Date = Convert.ToDateTime(reader["FECHAPRESTAMO"]),
-                DueDate = Convert.ToDateTime(reader["FECHALIMITEPRESTAMO"]),
-                PenaltyCost = Convert.ToDecimal(reader["COSTOMULTAPRESTAMO"]),
+                Date = reader["FECHAPRESTAMO"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["FECHAPRESTAMO"]),
+                DueDate = reader["FECHALIMITEPRESTAMO"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["FECHALIMITEPRESTAMO"]),
+                PenaltyCost = reader["COSTOMULTAPRESTAMO"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["COSTOMULTAPRESTAMO"]),
                 EquipmentId = reader["EQUIPO"].ToString(),
                 UserId = reader["USUARIO"].ToString(),
-                Equipment = new Equipment { Name = reader["equipment_name"].ToString()! },
-                User = new User { Name = reader["user_name"].ToString()! }
+                Equipment = new Equipment { Name = reader["equipment_name"].ToString() ?? string.Empty },
+                User = new User { Name = reader["user_name"].ToString() ?? string.Empty }
             };
         }
-
     }
 }

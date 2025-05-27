@@ -22,6 +22,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
+
     private ObservableCollection<Maintenance> _mantenimientos = new();
     private ObservableCollection<DamageReport> _damageReports = new();
     private ObservableCollection<Equipment> _equipment = new();
@@ -35,21 +36,19 @@ public partial class Entities : UserControl, INotifyPropertyChanged
     private ObservableCollection<User> _users = new();
     private ObservableCollection<UserLog> _userLogs = new();
     private ObservableCollection<UserRole> _userRoles = new();
-
-    
     
     public ReactiveCommand<Unit, Unit> AddCommand { get; }
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
-    
+    public ReactiveCommand<string, Unit> CreateCommand { get; }
     public Entities()
     {
         InitializeComponent();
-
         AddCommand = ReactiveCommand.Create(AddItem);
         EditCommand = ReactiveCommand.Create(EditItem);
         DeleteCommand = ReactiveCommand.Create(DeleteItem);
+        CreateCommand = ReactiveCommand.CreateFromTask<string>(CreateEntityAsync);
         DataContext = this;
 
         Loaded += async (s, e) =>
@@ -83,12 +82,31 @@ public partial class Entities : UserControl, INotifyPropertyChanged
         );
     }
     
-    private void AddItem()
+    private async void AddItem()
     {
         // Ejemplo: abrir ventana para agregar un nuevo mantenimiento, etc.
+  
+       // var crudWindow = new CreateEntityWindow();
+        //await crudWindow.ShowDialog(parentWindow);
+       // crudWindow.setEntity();
+        
         Console.WriteLine("Agregar ítem");
     }
+    public async Task create(string entityType)
+    {
+        var crudWindow = new CreateEntityWindow();
+        crudWindow.SetEntityType(entityType);
+        await crudWindow.ShowDialog(GetWindow());
+    }
 
+    private async Task CreateEntityAsync(string entityType)
+    {
+        var crudWindow = new CreateEntityWindow();
+        crudWindow.SetEntityType(entityType);
+    
+        // Asume que GetWindow() obtiene la ventana actual de forma segura
+        await crudWindow.ShowDialog(GetWindow()); 
+    }
     private void EditItem()
     {
         Console.WriteLine("Editar ítem");

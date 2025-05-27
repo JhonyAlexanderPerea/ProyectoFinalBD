@@ -20,4 +20,9 @@ public class DamageReportController
         return lista ?? new List<DamageReport>();
 
     }
+
+    public async Task CreateReport(DamageReport damageReport)
+    {
+        await _repository.Create(damageReport);
+    }
 }

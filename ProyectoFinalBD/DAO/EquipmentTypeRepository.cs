@@ -19,7 +19,7 @@ namespace ProyectoFinalBD.DAO
         {
             var types = new List<EquipmentType>();
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM TipoEquipo";
+            const string query = "SELECT codigoTipoEquipo, nombreTipoEquipo, descripcionTipoEquipo FROM TipoEquipo";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -38,10 +38,10 @@ namespace ProyectoFinalBD.DAO
             return types;
         }
 
-        public async Task<EquipmentType> GetById(string typeId)
+        public async Task<EquipmentType?> GetById(string typeId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT * FROM TipoEquipo WHERE codigoTipoEquipo = :typeId";
+            const string query = "SELECT codigoTipoEquipo, nombreTipoEquipo, descripcionTipoEquipo FROM TipoEquipo WHERE codigoTipoEquipo = :typeId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("typeId", OracleDbType.Varchar2).Value = typeId;

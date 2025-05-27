@@ -20,27 +20,25 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-    SELECT 
-        e.CODIGOEQUIPO,
-        e.NOMBREEQUIPO,
-        e.COSTOEQUIPO,
-        e.CARACTERISTICASEQUIPO,
-        e.TIPOEQUIPO,
-        e.UBICACION,
-        e.ESTADOEQUIPO,
-        e.PROVEEDOR,
-        te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
-        u.LUGARUBICACION AS ""location_name"",
-        ee.NOMBREESTADOEQUIPO AS ""status_name"",
-        p.NOMBREPROVEEDOR AS ""supplier_name""
-    FROM 
-        EQUIPO e
-        LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
-        LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
-        LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
-        LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR";
-
-
+                SELECT 
+                    e.CODIGOEQUIPO,
+                    e.NOMBREEQUIPO,
+                    e.COSTOEQUIPO,
+                    e.CARACTERISTICASEQUIPO,
+                    e.TIPOEQUIPO,
+                    e.UBICACION,
+                    e.ESTADOEQUIPO,
+                    e.PROVEEDOR,
+                    te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
+                    u.LUGARUBICACION AS ""location_name"",
+                    ee.NOMBREESTADOEQUIPO AS ""status_name"",
+                    p.NOMBREPROVEEDOR AS ""supplier_name""
+                FROM 
+                    EQUIPO e
+                    LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
+                    LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
+                    LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
+                    LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR";
 
             using var command = new OracleCommand(query, connection);
             var equipments = new List<Equipment>();
@@ -60,17 +58,27 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT e.*, 
-                       et.nombreTipoEquipo AS equipment_type_name,
-                       l.nombreUbicacion AS location_name,
-                       es.nombreEstado AS status_name,
-                       s.nombreProveedor AS supplier_name
-                FROM Equipo e
-                LEFT JOIN TipoEquipo et ON e.tipoEquipo = et.codigoTipoEquipo
-                LEFT JOIN Ubicacion l ON e.ubicacion = l.codigoUbicacion
-                LEFT JOIN EstadoEquipo es ON e.estadoEquipo = es.codigoEstado
-                LEFT JOIN Proveedor s ON e.proveedor = s.codigoProveedor
-                WHERE e.codigoEquipo = :equipmentId";
+                SELECT 
+                    e.CODIGOEQUIPO,
+                    e.NOMBREEQUIPO,
+                    e.COSTOEQUIPO,
+                    e.CARACTERISTICASEQUIPO,
+                    e.TIPOEQUIPO,
+                    e.UBICACION,
+                    e.ESTADOEQUIPO,
+                    e.PROVEEDOR,
+                    te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
+                    u.LUGARUBICACION AS ""location_name"",
+                    ee.NOMBREESTADOEQUIPO AS ""status_name"",
+                    p.NOMBREPROVEEDOR AS ""supplier_name""
+                FROM 
+                    EQUIPO e
+                    LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
+                    LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
+                    LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
+                    LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR
+                WHERE 
+                    e.CODIGOEQUIPO = :equipmentId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = equipmentId;
@@ -88,25 +96,21 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                INSERT INTO Equipo 
-                (codigoEquipo, nombreEquipo, costo, caracteristicas, tipoEquipo, ubicacion, estadoEquipo, proveedor)
+                INSERT INTO EQUIPO 
+                    (CODIGOEQUIPO, NOMBREEQUIPO, COSTOEQUIPO, CARACTERISTICASEQUIPO, TIPOEQUIPO, UBICACION, ESTADOEQUIPO, PROVEEDOR)
                 VALUES 
-                (:equipmentId, :name, :cost, :features, :equipmentTypeId, :locationId, :statusId, :supplierId)";
+                    (:equipmentId, :name, :cost, :features, :equipmentTypeId, :locationId, :statusId, :supplierId)";
 
             using var command = new OracleCommand(query, connection);
-            
+
             command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = equipment.EquipmentId;
             command.Parameters.Add("name", OracleDbType.Varchar2).Value = equipment.Name;
             command.Parameters.Add("cost", OracleDbType.Decimal).Value = equipment.Cost;
             command.Parameters.Add("features", OracleDbType.Varchar2).Value = equipment.Features;
-            command.Parameters.Add("equipmentTypeId", OracleDbType.Varchar2).Value = 
-                equipment.EquipmentTypeId ?? (object)DBNull.Value;
-            command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = 
-                equipment.LocationId ?? (object)DBNull.Value;
-            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = 
-                equipment.EquipmentStatusId ?? (object)DBNull.Value;
-            command.Parameters.Add("supplierId", OracleDbType.Varchar2).Value = 
-                equipment.SupplierId ?? (object)DBNull.Value;
+            command.Parameters.Add("equipmentTypeId", OracleDbType.Varchar2).Value = equipment.EquipmentTypeId ?? (object)DBNull.Value;
+            command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = equipment.LocationId ?? (object)DBNull.Value;
+            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = equipment.EquipmentStatusId ?? (object)DBNull.Value;
+            command.Parameters.Add("supplierId", OracleDbType.Varchar2).Value = equipment.SupplierId ?? (object)DBNull.Value;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
@@ -116,29 +120,27 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                UPDATE Equipo 
-                SET nombreEquipo = :name,
-                    costo = :cost,
-                    caracteristicas = :features,
-                    tipoEquipo = :equipmentTypeId,
-                    ubicacion = :locationId,
-                    estadoEquipo = :statusId,
-                    proveedor = :supplierId
-                WHERE codigoEquipo = :equipmentId";
+                UPDATE EQUIPO 
+                SET 
+                    NOMBREEQUIPO = :name,
+                    COSTOEQUIPO = :cost,
+                    CARACTERISTICASEQUIPO = :features,
+                    TIPOEQUIPO = :equipmentTypeId,
+                    UBICACION = :locationId,
+                    ESTADOEQUIPO = :statusId,
+                    PROVEEDOR = :supplierId
+                WHERE 
+                    CODIGOEQUIPO = :equipmentId";
 
             using var command = new OracleCommand(query, connection);
-            
+
             command.Parameters.Add("name", OracleDbType.Varchar2).Value = equipment.Name;
             command.Parameters.Add("cost", OracleDbType.Decimal).Value = equipment.Cost;
             command.Parameters.Add("features", OracleDbType.Varchar2).Value = equipment.Features;
-            command.Parameters.Add("equipmentTypeId", OracleDbType.Varchar2).Value = 
-                equipment.EquipmentTypeId ?? (object)DBNull.Value;
-            command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = 
-                equipment.LocationId ?? (object)DBNull.Value;
-            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = 
-                equipment.EquipmentStatusId ?? (object)DBNull.Value;
-            command.Parameters.Add("supplierId", OracleDbType.Varchar2).Value = 
-                equipment.SupplierId ?? (object)DBNull.Value;
+            command.Parameters.Add("equipmentTypeId", OracleDbType.Varchar2).Value = equipment.EquipmentTypeId ?? (object)DBNull.Value;
+            command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = equipment.LocationId ?? (object)DBNull.Value;
+            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = equipment.EquipmentStatusId ?? (object)DBNull.Value;
+            command.Parameters.Add("supplierId", OracleDbType.Varchar2).Value = equipment.SupplierId ?? (object)DBNull.Value;
             command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = equipment.EquipmentId;
 
             await connection.OpenAsync();
@@ -148,7 +150,7 @@ namespace ProyectoFinalBD.DAO
         public async Task Delete(string equipmentId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM Equipo WHERE codigoEquipo = :equipmentId";
+            const string query = "DELETE FROM EQUIPO WHERE CODIGOEQUIPO = :equipmentId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = equipmentId;
@@ -161,26 +163,27 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-    SELECT 
-        e.CODIGOEQUIPO,
-        e.NOMBREEQUIPO,
-        e.COSTOEQUIPO,
-        e.CARACTERISTICASEQUIPO,
-        e.TIPOEQUIPO,
-        e.UBICACION,
-        e.ESTADOEQUIPO,
-        e.PROVEEDOR,
-        te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
-        u.LUGARUBICACION AS ""location_name"",
-        ee.NOMBREESTADOEQUIPO AS ""status_name"",
-        p.NOMBREPROVEEDOR AS ""supplier_name""
-    FROM 
-        EQUIPO e
-        LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
-        LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
-        LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
-        LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR";
-
+                SELECT 
+                    e.CODIGOEQUIPO,
+                    e.NOMBREEQUIPO,
+                    e.COSTOEQUIPO,
+                    e.CARACTERISTICASEQUIPO,
+                    e.TIPOEQUIPO,
+                    e.UBICACION,
+                    e.ESTADOEQUIPO,
+                    e.PROVEEDOR,
+                    te.NOMBRETIPOEQUIPO AS ""equipment_type_name"",
+                    u.LUGARUBICACION AS ""location_name"",
+                    ee.NOMBREESTADOEQUIPO AS ""status_name"",
+                    p.NOMBREPROVEEDOR AS ""supplier_name""
+                FROM 
+                    EQUIPO e
+                    LEFT JOIN TIPOEQUIPO te ON e.TIPOEQUIPO = te.CODIGOTIPOEQUIPO
+                    LEFT JOIN UBICACION u ON e.UBICACION = u.CODIGOUBICACION
+                    LEFT JOIN ESTADOEQUIPO ee ON e.ESTADOEQUIPO = ee.CODIGOESTADOEQUIPO
+                    LEFT JOIN PROVEEDOR p ON e.PROVEEDOR = p.CODIGOPROVEEDOR
+                WHERE 
+                    e.UBICACION = :locationId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("locationId", OracleDbType.Varchar2).Value = locationId;
@@ -205,33 +208,31 @@ namespace ProyectoFinalBD.DAO
                 Name = reader["NOMBREEQUIPO"].ToString()!,
                 Cost = Convert.ToDecimal(reader["COSTOEQUIPO"]),
                 Features = reader["CARACTERISTICASEQUIPO"].ToString()!,
-                EquipmentTypeId = reader["TIPOEQUIPO"].ToString(),
-                LocationId = reader["UBICACION"].ToString(),
-                EquipmentStatusId = reader["ESTADOEQUIPO"].ToString(),
-                SupplierId = reader["PROVEEDOR"].ToString(),
+                EquipmentTypeId = reader["TIPOEQUIPO"]?.ToString(),
+                LocationId = reader["UBICACION"]?.ToString(),
+                EquipmentStatusId = reader["ESTADOEQUIPO"]?.ToString(),
+                SupplierId = reader["PROVEEDOR"]?.ToString(),
 
-                // alias en minúsculas definidos con comillas dobles
-                EquipmentType = reader["equipment_type_name"] != DBNull.Value ? new EquipmentType 
-                { 
-                    Name = reader["equipment_type_name"].ToString()! 
+                EquipmentType = reader["equipment_type_name"] != DBNull.Value ? new EquipmentType
+                {
+                    Name = reader["equipment_type_name"].ToString()!
                 } : null,
 
-                Location = reader["location_name"] != DBNull.Value ? new Location 
-                { 
-                    Name = reader["location_name"].ToString()! 
+                Location = reader["location_name"] != DBNull.Value ? new Location
+                {
+                    Name = reader["location_name"].ToString()!
                 } : null,
 
-                EquipmentStatus = reader["status_name"] != DBNull.Value ? new EquipmentStatus 
-                { 
-                    Name = reader["status_name"].ToString()! 
+                EquipmentStatus = reader["status_name"] != DBNull.Value ? new EquipmentStatus
+                {
+                    Name = reader["status_name"].ToString()!
                 } : null,
 
-                Supplier = reader["supplier_name"] != DBNull.Value ? new Supplier 
-                { 
-                    Name = reader["supplier_name"].ToString()! 
+                Supplier = reader["supplier_name"] != DBNull.Value ? new Supplier
+                {
+                    Name = reader["supplier_name"].ToString()!
                 } : null
             };
         }
-
     }
 }

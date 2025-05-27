@@ -22,7 +22,7 @@ namespace ProyectoFinalBD.DAO
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM DANIO"; // Nombre real de la tabla
+            command.CommandText = "SELECT * FROM DANIO";
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -40,14 +40,13 @@ namespace ProyectoFinalBD.DAO
             return reports;
         }
 
-
         public async Task<DamageReport> GetById(string id)
         {
             using var connection = new OracleConnection(_connectionString);
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM DAMAGE_REPORTS WHERE DAMAGE_REPORT_ID = :id";
+            command.CommandText = "SELECT * FROM DANIO WHERE CODIGODANIO = :id";
             command.Parameters.Add(new OracleParameter("id", id));
 
             using var reader = await command.ExecuteReaderAsync();
@@ -55,11 +54,11 @@ namespace ProyectoFinalBD.DAO
             {
                 return new DamageReport
                 {
-                    DamageReportId = reader["DAMAGE_REPORT_ID"].ToString(),
-                    Date = Convert.ToDateTime(reader["DATE"]),
-                    Cause = reader["CAUSE"].ToString(),
-                    Description = reader["DESCRIPTION"]?.ToString(),
-                    EquipmentId = reader["EQUIPMENT_ID"]?.ToString()
+                    DamageReportId = reader["CODIGODANIO"].ToString(),
+                    Date = Convert.ToDateTime(reader["FECHADANIO"]),
+                    Cause = reader["CAUSADANIO"].ToString(),
+                    Description = reader["DESCRIPCIONDANIO"]?.ToString(),
+                    EquipmentId = reader["EQUIPO"]?.ToString()
                 };
             }
 
@@ -72,15 +71,17 @@ namespace ProyectoFinalBD.DAO
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = @"INSERT INTO DAMAGE_REPORTS 
-                (DAMAGE_REPORT_ID, DATE, CAUSE, DESCRIPTION, EQUIPMENT_ID) 
-                VALUES (:id, :date, :cause, :description, :equipmentId)";
+            command.CommandText = @"INSERT INTO DANIO 
+                (CODIGODANIO, FECHADANIO, CAUSADANIO, DESCRIPCIONDANIO, EQUIPO) 
+                VALUES (:codigoDanio, :fechaDanio, :causaDanio, :descripcionDanio, :equipo)";
 
-            command.Parameters.Add(new OracleParameter("id", report.DamageReportId));
-            command.Parameters.Add(new OracleParameter("date", report.Date));
-            command.Parameters.Add(new OracleParameter("cause", report.Cause));
-            command.Parameters.Add(new OracleParameter("description", report.Description ?? (object)DBNull.Value));
-            command.Parameters.Add(new OracleParameter("equipmentId", report.EquipmentId ?? (object)DBNull.Value));
+            command.Parameters.Add(new OracleParameter("codigoDanio", report.DamageReportId));
+            command.Parameters.Add(new OracleParameter("fechaDanio", report.Date));
+            command.Parameters.Add(new OracleParameter("causaDanio", report.Cause));
+            command.Parameters.Add(new OracleParameter("descripcionDanio",
+                string.IsNullOrEmpty(report.Description) ? (object)DBNull.Value : report.Description));
+            command.Parameters.Add(new OracleParameter("equipo",
+                string.IsNullOrEmpty(report.EquipmentId) ? (object)DBNull.Value : report.EquipmentId));
 
             await command.ExecuteNonQueryAsync();
         }
@@ -91,18 +92,18 @@ namespace ProyectoFinalBD.DAO
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = @"UPDATE DAMAGE_REPORTS 
-                SET DATE = :date, 
-                    CAUSE = :cause, 
-                    DESCRIPTION = :description, 
-                    EQUIPMENT_ID = :equipmentId 
-                WHERE DAMAGE_REPORT_ID = :id";
+            command.CommandText = @"UPDATE DANIO 
+                SET FECHADANIO = :fechaDanio, 
+                    CAUSADANIO = :causaDanio, 
+                    DESCRIPCIONDANIO = :descripcionDanio, 
+                    EQUIPO = :equipo 
+                WHERE CODIGODANIO = :codigoDanio";
 
-            command.Parameters.Add(new OracleParameter("date", report.Date));
-            command.Parameters.Add(new OracleParameter("cause", report.Cause));
-            command.Parameters.Add(new OracleParameter("description", report.Description ?? (object)DBNull.Value));
-            command.Parameters.Add(new OracleParameter("equipmentId", report.EquipmentId ?? (object)DBNull.Value));
-            command.Parameters.Add(new OracleParameter("id", report.DamageReportId));
+            command.Parameters.Add(new OracleParameter("fechaDanio", report.Date));
+            command.Parameters.Add(new OracleParameter("causaDanio", report.Cause));
+            command.Parameters.Add(new OracleParameter("descripcionDanio", report.Description ?? (object)DBNull.Value));
+            command.Parameters.Add(new OracleParameter("equipo", report.EquipmentId ?? (object)DBNull.Value));
+            command.Parameters.Add(new OracleParameter("codigoDanio", report.DamageReportId));
 
             await command.ExecuteNonQueryAsync();
         }
@@ -113,7 +114,7 @@ namespace ProyectoFinalBD.DAO
             await connection.OpenAsync();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM DAMAGE_REPORTS WHERE DAMAGE_REPORT_ID = :id";
+            command.CommandText = "DELETE FROM DANIO WHERE CODIGODANIO = :id";
             command.Parameters.Add(new OracleParameter("id", id));
 
             await command.ExecuteNonQueryAsync();

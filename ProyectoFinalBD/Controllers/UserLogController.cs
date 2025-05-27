@@ -21,5 +21,10 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} registros de usuario");
             return lista ?? new List<UserLog>();
         }
+
+        public async Task createUserLog(UserLog userLog)
+        {
+            await _repository.Create(userLog);
+        }
     }
 }

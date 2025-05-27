@@ -20,12 +20,19 @@ namespace ProyectoFinalBD.DAO
             var returns = new List<Return>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT d.*, p.fechaPrestamo as loan_date
+                SELECT 
+                    d.codigoDevolucion AS CODIGODEVOLUTION,
+                    d.fecha AS FECHADEVOLUTION,
+                    d.notas AS OBSERVACIONESDEVOLUTION,
+                    d.penalizacionPagada AS PAGOMULTA,
+                    d.prestamo AS PRESTAMO,
+                    p.fechaPrestamo AS LOAN_DATE
                 FROM Devolucion d
                 JOIN Prestamo p ON d.prestamo = p.codigoPrestamo";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
+
             using var reader = await command.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
@@ -36,20 +43,23 @@ namespace ProyectoFinalBD.DAO
             return returns;
         }
 
-        public async Task<Return> GetById(string returnId)
+        public async Task<Return?> GetById(string returnId)
         {
+            if (string.IsNullOrEmpty(returnId))
+                throw new ArgumentException("returnId no puede ser nulo o vacío", nameof(returnId));
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 SELECT 
-    d.codigoDevolution AS ""return_id"",
-    d.fechaDevolution AS ""return_date"",
-    d.observacionesDevolution AS ""notes"",
-    d.pagoMulta AS ""penalty_paid"",
-    d.prestamo,
-    p.fechaPrestamo AS ""loan_date""
-FROM Devolucion d
-JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
-";
+                    d.codigoDevolucion AS CODIGODEVOLUTION,
+                    d.fecha AS FECHADEVOLUTION,
+                    d.notas AS OBSERVACIONESDEVOLUTION,
+                    d.penalizacionPagada AS PAGOMULTA,
+                    d.prestamo AS PRESTAMO,
+                    p.fechaPrestamo AS LOAN_DATE
+                FROM Devolucion d
+                JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
+                WHERE d.codigoDevolucion = :returnId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnId;
@@ -67,6 +77,15 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
 
         public async Task Create(Return returnObj)
         {
+            if (returnObj == null)
+                throw new ArgumentNullException(nameof(returnObj));
+
+            if (string.IsNullOrEmpty(returnObj.ReturnId))
+                throw new ArgumentException("ReturnId no puede ser nulo o vacío", nameof(returnObj.ReturnId));
+
+            if (string.IsNullOrEmpty(returnObj.LoanId))
+                throw new ArgumentException("LoanId no puede ser nulo o vacío", nameof(returnObj.LoanId));
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO Devolucion 
@@ -77,9 +96,8 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
             command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = returnObj.Notes;
-            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = 
-                returnObj.PenaltyPaid ?? (object)DBNull.Value;
+            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = (object?)returnObj.Notes ?? DBNull.Value;
+            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
             command.Parameters.Add("loanId", OracleDbType.Varchar2).Value = returnObj.LoanId;
 
             await connection.OpenAsync();
@@ -88,6 +106,12 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
 
         public async Task Update(Return returnObj)
         {
+            if (returnObj == null)
+                throw new ArgumentNullException(nameof(returnObj));
+
+            if (string.IsNullOrEmpty(returnObj.ReturnId))
+                throw new ArgumentException("ReturnId no puede ser nulo o vacío", nameof(returnObj.ReturnId));
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE Devolucion 
@@ -98,9 +122,8 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = returnObj.Notes;
-            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = 
-                returnObj.PenaltyPaid ?? (object)DBNull.Value;
+            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = (object?)returnObj.Notes ?? DBNull.Value;
+            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
 
             await connection.OpenAsync();
@@ -109,6 +132,9 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
 
         public async Task Delete(string returnId)
         {
+            if (string.IsNullOrEmpty(returnId))
+                throw new ArgumentException("returnId no puede ser nulo o vacío", nameof(returnId));
+
             using var connection = new OracleConnection(_connectionString);
             const string query = "DELETE FROM Devolucion WHERE codigoDevolucion = :returnId";
 
@@ -125,16 +151,14 @@ JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
             {
                 ReturnId = reader["CODIGODEVOLUTION"].ToString()!,
                 Date = Convert.ToDateTime(reader["FECHADEVOLUTION"]),
-                Notes = reader["OBSERVACIONESDEVOLUTION"].ToString()!,
-                PenaltyPaid = reader["PAGOMULTA"] != DBNull.Value ? 
-                    Convert.ToDecimal(reader["PAGOMULTA"]) : null,
+                Notes = reader["OBSERVACIONESDEVOLUTION"]?.ToString() ?? string.Empty,
+                PenaltyPaid = reader["PAGOMULTA"] != DBNull.Value ? Convert.ToDecimal(reader["PAGOMULTA"]) : null,
                 LoanId = reader["PRESTAMO"].ToString()!,
-                Loan = new Loan 
-                { 
-                    Date = Convert.ToDateTime(reader["loan_date"])
+                Loan = new Loan
+                {
+                    Date = Convert.ToDateTime(reader["LOAN_DATE"])
                 }
             };
         }
-
     }
 }

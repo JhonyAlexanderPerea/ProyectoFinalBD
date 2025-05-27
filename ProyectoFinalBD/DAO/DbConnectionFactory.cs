@@ -8,7 +8,7 @@ namespace ProyectoFinalBD.DAO
     {
         public static string GetConnectionString()
         {
-            return "User Id=sys;Password=admin;Data Source=localhost:1521/xe;DBA Privilege=SYSDBA";
+            return "User Id=sys;Password=122021;Data Source=localhost:1521/xe;DBA Privilege=SYSDBA";
         }
 
         public static async Task TestConnection()

@@ -21,10 +21,9 @@ namespace ProyectoFinalBD.DAO
             var logs = new List<UserLog>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-    SELECT l.*, u.nombreUser AS user_name
-    FROM LogUsuario l
-    LEFT JOIN Usuario u ON l.usuario = u.codigoUser";
-
+                SELECT l.*, u.nombreUsuario AS user_name
+                FROM RegistroUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -42,7 +41,7 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario as user_name
+                SELECT l.*, u.nombreUsuario AS user_name
                 FROM RegistroUsuario l
                 LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
                 WHERE l.codigoRegistro = :userLogId";
@@ -66,7 +65,7 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO RegistroUsuario 
-                (codigoRegistro, fecha, entrada, usuario) 
+                (codigoRegistro, fecha, registro, usuario) 
                 VALUES 
                 (:userLogId, :date, :entry, :userId)";
 
@@ -74,8 +73,7 @@ namespace ProyectoFinalBD.DAO
             command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
             command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
             command.Parameters.Add("entry", OracleDbType.Varchar2).Value = userLog.Entry;
-            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = 
-                userLog.UserId ?? (object)DBNull.Value;
+            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
@@ -98,7 +96,7 @@ namespace ProyectoFinalBD.DAO
             var logs = new List<UserLog>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario as user_name
+                SELECT l.*, u.nombreUsuario AS user_name
                 FROM RegistroUsuario l
                 LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
                 WHERE l.usuario = :userId";
@@ -121,7 +119,7 @@ namespace ProyectoFinalBD.DAO
         {
             return new UserLog
             {
-                UserLogId = reader["CODIGOLOGUSER"].ToString()!,
+                UserLogId = reader["CODIGOREGISTRO"].ToString()!,
                 Date = Convert.ToDateTime(reader["FECHA"]),
                 Entry = reader["REGISTRO"].ToString()!,
                 UserId = reader["USUARIO"]?.ToString(),
@@ -131,6 +129,5 @@ namespace ProyectoFinalBD.DAO
                 } : null
             };
         }
-
     }
 }

@@ -27,15 +27,16 @@ namespace ProyectoFinalBD
             
         }
 
-        private void OpenViewTransacciones(object? sender, RoutedEventArgs e)
+        private async void OpenViewTransacciones(object? sender, RoutedEventArgs e)
         {
-            //ContentArea.Content = new TransaccionesView();
+            var crudWindow = new CreateEntityWindow();
+            await crudWindow.ShowDialog(this); 
         }
 
         private void OpenViewReportes(object? sender, RoutedEventArgs e)
         {
-            //ContentArea.Content = new ReportesView();
-            ContentArea.Content = new MaintenanceView();
+            ContentArea.Content = new PDFGeneratorView();
+            // ContentArea.Content = new MaintenanceView();
 
         }
 

@@ -21,5 +21,11 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} municipios");
             return lista ?? new List<Municipality>();
         }
+
+        public async Task createMunicipality(Municipality municipality)
+        {
+            await _repository.Create(municipality);
+
+        }
     }
 }

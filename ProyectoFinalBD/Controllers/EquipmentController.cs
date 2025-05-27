@@ -21,5 +21,10 @@ namespace ProyectoFinalBD.Controllers
             Console.WriteLine($"Controlador recuperó {lista?.Count ?? 0} equipos");
             return lista ?? new List<Equipment>();
         }
+
+        public async Task CreateEquipment(Equipment equipment)
+        {
+            await _repository.Create(equipment);
+        }
     }
 }
