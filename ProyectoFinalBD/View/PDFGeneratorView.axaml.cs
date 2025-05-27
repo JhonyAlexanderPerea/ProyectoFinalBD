@@ -1,169 +1,216 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System;
-using System.Threading.Tasks;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using ProyectoFinalBD.util;
-using Avalonia.Markup.Xaml;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Threading.Tasks;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
-namespace ProyectoFinalBD.View;
-
-public partial class PDFGeneratorView : UserControl
+namespace ProyectoFinalBD.View
 {
-    private readonly PDFQueries _pdfQueries;
-    private ComboBox? _reportTypeCombo;
-    private Button? _generatePdfButton;
-    private TextBlock? _previewText;
-
-    public PDFGeneratorView()
+    public partial class PDFGeneratorView : UserControl
     {
-        InitializeComponent();
-        _pdfQueries = new PDFQueries();
+        
+        private readonly PDFQueries _pdfQueries;
+        private ComboBox? _reportTypeCombo;
+        private Button? _generatePdfButton;
+        private TextBlock? _previewText;
 
-        _reportTypeCombo = this.FindControl<ComboBox>("ReportTypeCombo");
-        _generatePdfButton = this.FindControl<Button>("GeneratePdfButton");
-        _previewText = this.FindControl<TextBlock>("PreviewText");
-
-        if (_reportTypeCombo != null && _generatePdfButton != null)
+        public PDFGeneratorView()
         {
-            _reportTypeCombo.SelectionChanged += OnReportTypeChanged;
-            _generatePdfButton.Click += OnGeneratePdfClick;
-        }
-    }
+            InitializeComponent();
+            QuestPDF.Settings.License = LicenseType.Community;
+            _pdfQueries = new PDFQueries();
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-    
-    private void OnReportTypeChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (_generatePdfButton != null && _reportTypeCombo != null)
-        {
-            _generatePdfButton.IsEnabled = _reportTypeCombo.SelectedItem != null;
-            if (_reportTypeCombo.SelectedItem != null)
+            _reportTypeCombo = this.FindControl<ComboBox>("ReportTypeCombo");
+            _generatePdfButton = this.FindControl<Button>("GeneratePdfButton");
+            _previewText = this.FindControl<TextBlock>("PreviewText");
+
+            if (_reportTypeCombo != null && _generatePdfButton != null)
             {
-                UpdatePreview();
+                _reportTypeCombo.SelectionChanged += OnReportTypeChanged;
+                _generatePdfButton.Click += OnGeneratePdfClick;
+                _generatePdfButton.IsEnabled = false;
             }
         }
-    }
-    
-    private async void UpdatePreview()
-    {
-        try
+
+        private void InitializeComponent()
         {
-            if (_reportTypeCombo != null && _previewText != null)
+            AvaloniaXamlLoader.Load(this);
+        }
+
+        private void OnReportTypeChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_generatePdfButton != null && _reportTypeCombo != null)
             {
-                var selectedReport = ((ComboBoxItem)_reportTypeCombo.SelectedItem!)?.Content.ToString();
+                _generatePdfButton.IsEnabled = _reportTypeCombo.SelectedItem != null;
+                if (_reportTypeCombo.SelectedItem != null)
+                {
+                    _ = UpdatePreviewAsync();
+                }
+            }
+        }
+
+        private async Task UpdatePreviewAsync()
+        {
+            try
+            {
+                if (_reportTypeCombo == null || _previewText == null)
+                    return;
+
+                var selectedReport = ((_reportTypeCombo.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
+
                 _previewText.Text = "Cargando vista previa...";
-                
+
+                DataTable dt = selectedReport switch
+                {
+                    "Equipos más prestados" =>  _pdfQueries.GetEquiposMasPrestados(),
+                    "Usuarios con más préstamos" =>  _pdfQueries.GetUsuariosConMasPrestamos(),
+                    "Reporte de equipos en reparación" =>  _pdfQueries.GetEquiposEnReparacion(),
+                    "Préstamos activos por tipo de equipo" => _pdfQueries.GetPrestamosActivosPorTipoEquipo(),
+                    "Estadísticas de mantenimiento de equipos" =>  _pdfQueries.GetEstadisticasMantenimiento(),
+                    _ => null
+                };
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    _previewText.Text = "No hay datos para mostrar.";
+                    return;
+                }
+
+                // Para vista previa, mostramos por ejemplo el conteo de filas y columnas:
+                _previewText.Text = $"Vista previa:\nColumnas: {dt.Columns.Count}\nFilas: {dt.Rows.Count}";
+
+                // Opcional: mostrar una tabla simple o algún resumen aquí
+            }
+            catch (Exception ex)
+            {
+                if (_previewText != null)
+                    _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
+            }
+        }
+
+        private async void OnGeneratePdfClick(object? sender, RoutedEventArgs e)
+        {
+            
+            try
+            {
+                if (_reportTypeCombo == null)
+                    return;
+
+                var selectedReport = ((_reportTypeCombo.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
+
+                string titulo = "";
+                string nombreArchivo = "";
+                DataTable dt = null;
+
                 switch (selectedReport)
                 {
                     case "Equipos más prestados":
-                       // _previewText.Text = await _pdfQueries.GetMostLoanedEquipmentPreview();
+                        titulo = "Equipos más prestados";
+                        nombreArchivo = "EquiposMasPrestados.pdf";
+                        dt =  _pdfQueries.GetEquiposMasPrestados();
                         break;
                     case "Usuarios con más préstamos":
-                        //_previewText.Text = await _pdfQueries.GetUsersWithMostLoansPreview();
+                        titulo = "Usuarios con más préstamos";
+                        nombreArchivo = "UsuariosConMasPrestamos.pdf";
+                        dt =  _pdfQueries.GetUsuariosConMasPrestamos();
                         break;
                     case "Reporte de equipos en reparación":
-                       // _previewText.Text = await _pdfQueries.GetEquipmentInRepairPreview();
+                        titulo = "Equipos en reparación";
+                        nombreArchivo = "EquiposEnReparacion.pdf";
+                        dt =  _pdfQueries.GetEquiposEnReparacion();
                         break;
                     case "Préstamos activos por tipo de equipo":
-                      //  _previewText.Text = await _pdfQueries.GetActiveLoansPerTypePreview();
+                        titulo = "Préstamos activos por tipo de equipo";
+                        nombreArchivo = "PrestamosActivosPorTipo.pdf";
+                        dt =  _pdfQueries.GetPrestamosActivosPorTipoEquipo();
                         break;
                     case "Estadísticas de mantenimiento de equipos":
-                       // _previewText.Text = await _pdfQueries.GetMaintenanceStatisticsPreview();
+                        titulo = "Estadísticas de mantenimiento de equipos";
+                        nombreArchivo = "EstadisticasMantenimiento.pdf";
+                        dt =  _pdfQueries.GetEstadisticasMantenimiento();
                         break;
+                    default:
+                        await ShowMessage("Aviso", "Seleccione un reporte válido.");
+                        return;
                 }
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    await ShowMessage("Aviso", "No hay datos para generar el reporte.");
+                    return;
+                }
+
+                var lista = dt.ToDictionaryList();
+                var encabezados = new List<string>();
+                foreach (DataColumn col in dt.Columns)
+                    encabezados.Add(col.ColumnName);
+
+                var pdf = new PDFGenerator(titulo, encabezados, lista);
+                pdf.GeneratePdf(nombreArchivo);
+
+                await ShowMessage("Éxito", $"PDF generado: {Path.GetFullPath(nombreArchivo)}");
+                pdf.OpenPdfFile(Path.GetFullPath(nombreArchivo));
+            }
+            catch (Exception ex)
+            {
+                await ShowError("Error", $"Error al generar el PDF: {ex.Message}");
             }
         }
-        catch (Exception ex)
-        {
-            if (_previewText != null)
-                _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
-        }
-    }
-    
-    private async void OnGeneratePdfClick(object? sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (_reportTypeCombo != null)
-            {
-                var selectedReport = ((ComboBoxItem)_reportTypeCombo.SelectedItem!)?.Content.ToString();
-                
-                switch (selectedReport)
-                {
-                    case "Equipos más prestados":
-                       // await _pdfQueries.GenerateMostLoanedEquipmentPDF();
-                        break;
-                    case "Usuarios con más préstamos":
-                        //await _pdfQueries.GenerateUsersWithMostLoansPDF();
-                        break;
-                    case "Reporte de equipos en reparación":
-                       // await _pdfQueries.GenerateEquipmentInRepairPDF();
-                        break;
-                    case "Préstamos activos por tipo de equipo":
-                       //await _pdfQueries.GenerateActiveLoansPerTypePDF();
-                        break;
-                    case "Estadísticas de mantenimiento de equipos":
-                        //await _pdfQueries.GenerateMaintenanceStatisticsPDF();
-                        break;
-                }
-                
-                await ShowMessage("Éxito", "El PDF se ha generado correctamente.");
-            }
-        }
-        catch (Exception ex)
-        {
-            await ShowError("Error", $"Error al generar el PDF: {ex.Message}");
-        }
-    }
-    
-    private async Task ShowMessage(string title, string message)
-    {
-        var messageBox = new Window
-        {
-            Title = title,
-            Content = new StackPanel
-            {
-                Children =
-                {
-                    new TextBlock { Text = message },
-                    new Button { Content = "Aceptar" }
-                }
-            },
-            Width = 250,
-            Height = 100,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
-        };
 
-        ((Button)((StackPanel)messageBox.Content).Children[1]).Click += (s, e) => messageBox.Close();
-        await messageBox.ShowDialog(GetWindow());
-    }
-    
-    private async Task ShowError(string title, string message)
-    {
-        var messageBox = new Window
+        private async Task ShowMessage(string title, string message)
         {
-            Title = title,
-            Content = new StackPanel
+            var messageBox = new Window
             {
-                Children =
+                Title = title,
+                Content = new StackPanel
                 {
-                    new TextBlock { Text = message, Foreground = new SolidColorBrush(Colors.Red) },
-                    new Button { Content = "Aceptar" }
-                }
-            },
-            Width = 250,
-            Height = 100,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
-        };
+                    Margin = new Thickness(10),
+                    Children =
+                    {
+                        new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
+                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+                    }
+                },
+                Width = 350,
+                Height = 150,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
 
-        ((Button)((StackPanel)messageBox.Content).Children[1]).Click += (s, e) => messageBox.Close();
-        await messageBox.ShowDialog(GetWindow());
+            ((Button)((StackPanel)messageBox.Content).Children[1]).Click += (s, e) => messageBox.Close();
+            await messageBox.ShowDialog(GetWindow());
+        }
+
+        private async Task ShowError(string title, string message)
+        {
+            var messageBox = new Window
+            {
+                Title = title,
+                Content = new StackPanel
+                {
+                    Margin = new Thickness(10),
+                    Children =
+                    {
+                        new TextBlock { Text = message, Foreground = new SolidColorBrush(Colors.Red), TextWrapping = TextWrapping.Wrap },
+                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+                    }
+                },
+                Width = 350,
+                Height = 150,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            ((Button)((StackPanel)messageBox.Content).Children[1]).Click += (s, e) => messageBox.Close();
+            await messageBox.ShowDialog(GetWindow());
+        }
+
+        private Window GetWindow() => (Window)this.VisualRoot!;
     }
-    
-    private Window GetWindow() => (Window)this.VisualRoot!;
 }
