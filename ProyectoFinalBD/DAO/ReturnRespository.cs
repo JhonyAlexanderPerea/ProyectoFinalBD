@@ -21,12 +21,12 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 SELECT 
-                    d.codigoDevolucion AS CODIGODEVOLUTION,
-                    d.fecha AS FECHADEVOLUTION,
-                    d.notas AS OBSERVACIONESDEVOLUTION,
-                    d.penalizacionPagada AS PAGOMULTA,
+                    d.codigoDevolution AS CODIGODEVOLUTION,
+                    d.fechaDevolution AS FECHADEVOLUTION,
+                    d.observacionesDevolution AS OBSERVACIONESDEVOLUTION,
+                    d.pagoMulta AS PAGOMULTA,
                     d.prestamo AS PRESTAMO,
-                    p.fechaPrestamo AS LOAN_DATE
+                    p.fechaPrestamo AS FECHAPRESTAMO
                 FROM Devolucion d
                 JOIN Prestamo p ON d.prestamo = p.codigoPrestamo";
 
@@ -51,15 +51,15 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 SELECT 
-                    d.codigoDevolucion AS CODIGODEVOLUTION,
-                    d.fecha AS FECHADEVOLUTION,
-                    d.notas AS OBSERVACIONESDEVOLUTION,
-                    d.penalizacionPagada AS PAGOMULTA,
+                    d.codigoDevolution AS CODIGODEVOLUTION,
+                    d.fechaDevolution AS FECHADEVOLUTION,
+                    d.observacionesDevolution AS OBSERVACIONESDEVOLUTION,
+                    d.pagoMulta AS PAGOMULTA,
                     d.prestamo AS PRESTAMO,
-                    p.fechaPrestamo AS LOAN_DATE
+                    p.fechaPrestamo AS FECHAPRESTAMO
                 FROM Devolucion d
                 JOIN Prestamo p ON d.prestamo = p.codigoPrestamo
-                WHERE d.codigoDevolucion = :returnId";
+                WHERE d.codigoDevolution = :returnId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnId;
@@ -89,14 +89,14 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO Devolucion 
-                (codigoDevolucion, fecha, notas, penalizacionPagada, prestamo) 
+                (codigoDevolution, fechaDevolution, observacionesDevolution, pagoMulta, prestamo) 
                 VALUES 
                 (:returnId, :date, :notes, :penaltyPaid, :loanId)";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
             command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = (object?)returnObj.Notes ?? DBNull.Value;
+            command.Parameters.Add("notes", OracleDbType.Clob).Value = (object?)returnObj.Notes ?? DBNull.Value;
             command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
             command.Parameters.Add("loanId", OracleDbType.Varchar2).Value = returnObj.LoanId;
 
@@ -115,14 +115,14 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE Devolucion 
-                SET fecha = :date,
-                    notas = :notes,
-                    penalizacionPagada = :penaltyPaid
-                WHERE codigoDevolucion = :returnId";
+                SET fechaDevolution = :date,
+                    observacionesDevolution = :notes,
+                    pagoMulta = :penaltyPaid
+                WHERE codigoDevolution = :returnId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Varchar2).Value = (object?)returnObj.Notes ?? DBNull.Value;
+            command.Parameters.Add("notes", OracleDbType.Clob).Value = (object?)returnObj.Notes ?? DBNull.Value;
             command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
 
@@ -136,7 +136,7 @@ namespace ProyectoFinalBD.DAO
                 throw new ArgumentException("returnId no puede ser nulo o vacío", nameof(returnId));
 
             using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM Devolucion WHERE codigoDevolucion = :returnId";
+            const string query = "DELETE FROM Devolucion WHERE codigoDevolution = :returnId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnId;
@@ -156,7 +156,7 @@ namespace ProyectoFinalBD.DAO
                 LoanId = reader["PRESTAMO"].ToString()!,
                 Loan = new Loan
                 {
-                    Date = Convert.ToDateTime(reader["LOAN_DATE"])
+                    Date = Convert.ToDateTime(reader["FECHAPRESTAMO"])
                 }
             };
         }

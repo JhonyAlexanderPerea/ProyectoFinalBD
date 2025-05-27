@@ -29,10 +29,10 @@ namespace ProyectoFinalBD.DAO
                     p.equipo,
                     p.usuario,
                     e.nombreEquipo AS equipment_name,
-                    u.nombreUsuario AS user_name
+                    u.nombreUser AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
-                JOIN Usuario u ON p.usuario = u.codigoUsuario";
+                JOIN Usuario u ON p.usuario = u.codigoUser";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -58,10 +58,10 @@ namespace ProyectoFinalBD.DAO
                     p.equipo,
                     p.usuario,
                     e.nombreEquipo AS equipment_name,
-                    u.nombreUsuario AS user_name
+                    u.nombreUser AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
-                JOIN Usuario u ON p.usuario = u.codigoUsuario
+                JOIN Usuario u ON p.usuario = u.codigoUser
                 WHERE p.codigoPrestamo = :loanId";
 
             using var command = new OracleCommand(query, connection);
@@ -80,6 +80,15 @@ namespace ProyectoFinalBD.DAO
 
         public async Task Create(Loan loan)
         {
+            if (loan == null)
+                throw new ArgumentNullException(nameof(loan));
+
+            if (string.IsNullOrEmpty(loan.LoanId))
+                throw new ArgumentException("Loan ID cannot be null or empty", nameof(loan.LoanId));
+
+            if (loan.Date >= loan.DueDate)
+                throw new ArgumentException("Due date must be after loan date");
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO Prestamo 
@@ -103,6 +112,15 @@ namespace ProyectoFinalBD.DAO
 
         public async Task Update(Loan loan)
         {
+            if (loan == null)
+                throw new ArgumentNullException(nameof(loan));
+
+            if (string.IsNullOrEmpty(loan.LoanId))
+                throw new ArgumentException("Loan ID cannot be null or empty", nameof(loan.LoanId));
+
+            if (loan.Date >= loan.DueDate)
+                throw new ArgumentException("Due date must be after loan date");
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE Prestamo 
@@ -127,6 +145,9 @@ namespace ProyectoFinalBD.DAO
 
         public async Task Delete(string loanId)
         {
+            if (string.IsNullOrEmpty(loanId))
+                throw new ArgumentException("Loan ID cannot be null or empty", nameof(loanId));
+
             using var connection = new OracleConnection(_connectionString);
             const string query = "DELETE FROM Prestamo WHERE codigoPrestamo = :loanId";
 
@@ -150,10 +171,10 @@ namespace ProyectoFinalBD.DAO
                     p.equipo,
                     p.usuario,
                     e.nombreEquipo AS equipment_name,
-                    u.nombreUsuario AS user_name
+                    u.nombreUser AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
-                JOIN Usuario u ON p.usuario = u.codigoUsuario
+                JOIN Usuario u ON p.usuario = u.codigoUser
                 WHERE p.usuario = :userId";
 
             using var command = new OracleCommand(query, connection);
@@ -183,10 +204,10 @@ namespace ProyectoFinalBD.DAO
                     p.equipo,
                     p.usuario,
                     e.nombreEquipo AS equipment_name,
-                    u.nombreUsuario AS user_name
+                    u.nombreUser AS user_name
                 FROM Prestamo p
                 JOIN Equipo e ON p.equipo = e.codigoEquipo
-                JOIN Usuario u ON p.usuario = u.codigoUsuario
+                JOIN Usuario u ON p.usuario = u.codigoUser
                 WHERE p.equipo = :equipmentId";
 
             using var command = new OracleCommand(query, connection);
@@ -207,14 +228,14 @@ namespace ProyectoFinalBD.DAO
         {
             return new Loan
             {
-                LoanId = reader["CODIGOPRESTAMO"].ToString()!,
-                Date = reader["FECHAPRESTAMO"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["FECHAPRESTAMO"]),
-                DueDate = reader["FECHALIMITEPRESTAMO"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["FECHALIMITEPRESTAMO"]),
-                PenaltyCost = reader["COSTOMULTAPRESTAMO"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["COSTOMULTAPRESTAMO"]),
-                EquipmentId = reader["EQUIPO"].ToString(),
-                UserId = reader["USUARIO"].ToString(),
-                Equipment = new Equipment { Name = reader["equipment_name"].ToString() ?? string.Empty },
-                User = new User { Name = reader["user_name"].ToString() ?? string.Empty }
+                LoanId = reader["codigoPrestamo"].ToString()!,
+                Date = Convert.ToDateTime(reader["fechaPrestamo"]),
+                DueDate = Convert.ToDateTime(reader["fechaLimitePrestamo"]),
+                PenaltyCost = Convert.ToDecimal(reader["costoMultaPrestamo"]),
+                EquipmentId = reader["equipo"]?.ToString(),
+                UserId = reader["usuario"]?.ToString(),
+                Equipment = new Equipment { Name = reader["equipment_name"].ToString() },
+                User = new User { Name = reader["user_name"].ToString() }
             };
         }
     }

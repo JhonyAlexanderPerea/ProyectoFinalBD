@@ -21,9 +21,9 @@ namespace ProyectoFinalBD.DAO
             var logs = new List<UserLog>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario AS user_name
-                FROM RegistroUsuario l
-                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario";
+                SELECT l.*, u.nombreUser AS user_name
+                FROM LogUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUser";
 
             using var command = new OracleCommand(query, connection);
             await connection.OpenAsync();
@@ -41,10 +41,10 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario AS user_name
-                FROM RegistroUsuario l
-                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
-                WHERE l.codigoRegistro = :userLogId";
+                SELECT l.*, u.nombreUser AS user_name
+                FROM LogUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUser
+                WHERE l.codigoLogUser = :userLogId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLogId;
@@ -64,15 +64,15 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                INSERT INTO RegistroUsuario 
-                (codigoRegistro, fecha, registro, usuario) 
+                INSERT INTO LogUsuario 
+                (codigoLogUser, fecha, registro, usuario) 
                 VALUES 
                 (:userLogId, :date, :entry, :userId)";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
             command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
-            command.Parameters.Add("entry", OracleDbType.Varchar2).Value = userLog.Entry;
+            command.Parameters.Add("entry", OracleDbType.Clob).Value = userLog.Entry; // Changed to Clob
             command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
 
             await connection.OpenAsync();
@@ -82,7 +82,7 @@ namespace ProyectoFinalBD.DAO
         public async Task Delete(string userLogId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM RegistroUsuario WHERE codigoRegistro = :userLogId";
+            const string query = "DELETE FROM LogUsuario WHERE codigoLogUser = :userLogId";
 
             using var command = new OracleCommand(query, connection);
             command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLogId;
@@ -96,9 +96,9 @@ namespace ProyectoFinalBD.DAO
             var logs = new List<UserLog>();
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                SELECT l.*, u.nombreUsuario AS user_name
-                FROM RegistroUsuario l
-                LEFT JOIN Usuario u ON l.usuario = u.codigoUsuario
+                SELECT l.*, u.nombreUser AS user_name
+                FROM LogUsuario l
+                LEFT JOIN Usuario u ON l.usuario = u.codigoUser
                 WHERE l.usuario = :userId";
 
             using var command = new OracleCommand(query, connection);
@@ -119,11 +119,11 @@ namespace ProyectoFinalBD.DAO
         {
             return new UserLog
             {
-                UserLogId = reader["CODIGOREGISTRO"].ToString()!,
-                Date = Convert.ToDateTime(reader["FECHA"]),
-                Entry = reader["REGISTRO"].ToString()!,
-                UserId = reader["USUARIO"]?.ToString(),
-                User = reader["USUARIO"] != DBNull.Value ? new User 
+                UserLogId = reader["codigoLogUser"].ToString()!,
+                Date = Convert.ToDateTime(reader["fecha"]),
+                Entry = reader["registro"].ToString()!, // Changed to match column name
+                UserId = reader["usuario"]?.ToString(), // Changed to match column name
+                User = reader["usuario"] != DBNull.Value ? new User 
                 { 
                     Name = reader["user_name"].ToString()! 
                 } : null

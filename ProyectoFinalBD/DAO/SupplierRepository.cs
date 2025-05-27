@@ -72,7 +72,7 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 INSERT INTO Proveedor 
-                (codigoProveedor, nombreProveedor, contacto, correoElectronico, mesesGarantia, municipio) 
+                (codigoProveedor, nombreProveedor, noContactoProveedor, correoProveedor, garantiaGenMesProveedor, municipio) 
                 VALUES 
                 (:supplierId, :name, :contact, :email, :warrantyMonths, :municipalityId)";
 
@@ -99,9 +99,9 @@ namespace ProyectoFinalBD.DAO
             const string query = @"
                 UPDATE Proveedor 
                 SET nombreProveedor = :name,
-                    contacto = :contact,
-                    correoElectronico = :email,
-                    mesesGarantia = :warrantyMonths,
+                    noContactoProveedor = :contact,
+                    correoProveedor = :email,
+                    garantiaGenMesProveedor = :warrantyMonths,
                     municipio = :municipalityId
                 WHERE codigoProveedor = :supplierId";
 
@@ -136,15 +136,15 @@ namespace ProyectoFinalBD.DAO
         {
             return new Supplier
             {
-                SupplierId = reader["CODIGOPROVEEDOR"].ToString()!,
-                Name = reader["NOMBREPROVEEDOR"].ToString()!,
-                Contact = reader["CONTACTO"]?.ToString(),
-                Email = reader["CORREOELECTRONICO"]?.ToString(),
-                WarrantyMonths = reader["MESESGARANTIA"] != DBNull.Value ? Convert.ToInt32(reader["MESESGARANTIA"]) : 0,
-                MunicipalityId = reader["MUNICIPIO"]?.ToString(),
-                Municipality = reader["MUNICIPIO"] != DBNull.Value ? new Municipality 
+                SupplierId = reader["codigoProveedor"].ToString()!,
+                Name = reader["nombreProveedor"].ToString()!,
+                Contact = reader["noContactoProveedor"]?.ToString(),
+                Email = reader["correoProveedor"]?.ToString(),
+                WarrantyMonths = Convert.ToInt32(reader["garantiaGenMesProveedor"]),
+                MunicipalityId = reader["municipio"]?.ToString(),
+                Municipality = reader["municipio"] != DBNull.Value ? new Municipality 
                 { 
-                    Name = reader["municipality_name"].ToString()! 
+                    Name = reader["municipality_name"]?.ToString() ?? string.Empty
                 } : null
             };
         }
