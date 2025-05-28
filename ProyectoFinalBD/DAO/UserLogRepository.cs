@@ -123,12 +123,6 @@ namespace ProyectoFinalBD.DAO
                 Date = Convert.ToDateTime(reader["fecha"]),
                 Entry = reader["registro"].ToString()!, // Changed to match column name
                 UserId = reader["usuario"]?.ToString(), // Changed to match column name
-                User = reader["usuario"] != DBNull.Value
-                    ? new User
-                    {
-                        Name = reader["user_name"].ToString()!
-                    }
-                    : null
             };
         }
 

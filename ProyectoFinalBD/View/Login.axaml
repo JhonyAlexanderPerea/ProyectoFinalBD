@@ -12,15 +12,15 @@
     <Grid>
         <Border Background="White" CornerRadius="25" Padding="30" Width="350" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <StackPanel Spacing="20">
-                <TextBlock Text="Sign In"  Foreground="Black"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+                <TextBlock Text="Inicio de Sesión"  Foreground="Black"  FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
                 
-                <TextBox Name="Username"
+                <TextBox Name="UserId"
                          Width="250"
                          CornerRadius="10"
                          Foreground="Black"
                          Background="AliceBlue"
                          HorizontalAlignment="Center"
-                         Watermark="Email" />
+                         Watermark="Identificación" />
 
                 <TextBox Name="Password"
                          Foreground="Black"
@@ -29,9 +29,9 @@
                          CornerRadius="10"
                          HorizontalAlignment="Center"
                          PasswordChar="●"
-                         Watermark="Password" />
+                         Watermark="Contraseña" />
 
-                <Button Content="Sign In"
+                <Button Content="Iniciar Sesión"
                         Click="OpenMain"
                         CornerRadius="10"
                         Background="Green"
@@ -48,7 +48,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10" Grid.Column="0">
-                        <Button Content="Exit"
+                        <Button Content="Salir"
                                 CornerRadius="10"
                                 Click="Exit"
                                 Background="#CC0004"
@@ -56,7 +56,7 @@
                                 HorizontalAlignment="Center"
                                 HorizontalContentAlignment="Center"
                                 Width="150"/>
-                        <Button Content="Sign Up"
+                        <Button Content="Registrarse"
                                 CornerRadius="10"
                                 Click="OpenRegisterView"
                                 Background="CornflowerBlue"

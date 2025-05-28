@@ -1,8 +1,13 @@
+using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using ProyectoFinalBD.Controllers;
+using ProyectoFinalBD.Model;
+using ProyectoFinalBD.util;
 using ProyectoFinalBD.View;
 using Calendar = Avalonia.Controls.Calendar;
 
@@ -10,10 +15,17 @@ namespace ProyectoFinalBD
 {
     public partial class MainMenu : Window
     {
-        private UserController userController;
+        private UserController _userController;
+        private UserLogController _userLogController;
+        private string userId;
+        private UserLog userLog;
+        private UserActionLogger userActionLogger;
+
         public MainMenu()
         {
-            userController = new UserController();
+            _userController = new UserController();
+            _userLogController = new UserLogController();
+            userActionLogger = new UserActionLogger();
             InitializeComponent();
 
             // Cargar vista inicial por defecto
@@ -21,11 +33,12 @@ namespace ProyectoFinalBD
             
         }
 
-        private void OpenViewEntidades(object? sender, RoutedEventArgs e)
+        private  void OpenViewEntidades(object? sender, RoutedEventArgs e)
         {
-            ContentArea.Content = new Entities();
+            ContentArea.Content = new Entities(userId);
             
         }
+
 
         private async void OpenViewTransacciones(object? sender, RoutedEventArgs e)
         {
@@ -33,15 +46,14 @@ namespace ProyectoFinalBD
             await crudWindow.ShowDialog(this); 
         }
 
-        private void OpenViewReportes(object? sender, RoutedEventArgs e)
+        private  void OpenViewReportes(object? sender, RoutedEventArgs e)
         {
             ContentArea.Content = new PDFGeneratorView();
-            // ContentArea.Content = new MaintenanceView();
-
         }
 
         private void OpenViewUtilidades(object? sender, RoutedEventArgs e)
 {
+          
             // Panel principal
             var contentPanel = new Grid
             {
@@ -132,6 +144,7 @@ namespace ProyectoFinalBD
             {
                 contentArea.Content = contentPanel;
             }
+              
         }
 
         private void OpenViewAyudas(object? sender, RoutedEventArgs e)
@@ -141,8 +154,8 @@ namespace ProyectoFinalBD
 
         private void OpenViewLogin(object? sender, RoutedEventArgs e)
         {
-            userController.Logout(); // Desloguea el usuario
-            var loginWindow = new Login(); // Tu ventana de login
+            _userController.Logout(); // Desloguea el usuario
+            var loginWindow = new Login(); 
             loginWindow.Show();
             this.Close(); // Cierra este MainMenu
         }
@@ -171,5 +184,13 @@ namespace ProyectoFinalBD
             calendarioWindow.Show();
         }
 
+        public void setUserId(string userId)
+        {
+            this.userId = userId;
+        }
+        public string getUserId()
+        {
+            return this.userId;
+        }
     }
 }

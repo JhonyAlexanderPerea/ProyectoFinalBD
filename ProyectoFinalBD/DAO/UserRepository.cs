@@ -120,7 +120,7 @@ public class UserRepository
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<User?> ValidateLogin(string email, string password)
+    public async Task<User?> ValidateLogin(string cedula, string password)
     {
         using var connection = new OracleConnection(_connectionString);
         const string query = @"
@@ -128,10 +128,10 @@ public class UserRepository
             FROM Usuario u
             LEFT JOIN RolUsuario r ON u.rolUsuario = r.codigoRolUsuario
             LEFT JOIN Municipio m ON u.municipio = m.codigoMunicipio
-            WHERE u.correoUser = :email AND u.contrasenaUser = :password";
+            WHERE u.codigoUser = :cedula AND u.contrasenaUser = :password";
 
         using var command = new OracleCommand(query, connection);
-        command.Parameters.Add("email", OracleDbType.Varchar2).Value = email;
+        command.Parameters.Add("userId", OracleDbType.Varchar2).Value = cedula;
         command.Parameters.Add("password", OracleDbType.Varchar2).Value = password;
 
         await connection.OpenAsync();

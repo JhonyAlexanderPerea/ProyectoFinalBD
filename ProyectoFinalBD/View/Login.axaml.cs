@@ -15,6 +15,7 @@ public partial class Login : Window
 {
     private Message _message = new Message();
     private readonly UserController _userController;
+    
 
     public Login()
     {
@@ -24,19 +25,20 @@ public partial class Login : Window
     
     private async void OpenMain(object? sender, RoutedEventArgs e)
     {
-        string userName = Username.Text;
+        string userId = UserId.Text;
         string password = Password.Text;
 
-        if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(password))
         {
             await ShowError("Error","Por favor ingrese usuario y contraseña");
             return;
         }
 
-        if (await validarLogin(userName, password))
+        if (await validarLogin(userId, password))
         {
             MainMenu mainMenu = new MainMenu();
             mainMenu.Show();
+            mainMenu.setUserId(userId);
             this.Close();
         }
         else
@@ -45,12 +47,12 @@ public partial class Login : Window
         }
     }
 
-    private async Task<bool> validarLogin(string email, string password)
+    private async Task<bool> validarLogin(string cedula, string password)
     {
         try
         {
             
-            return await _userController.Login(email, password);
+            return await _userController.Login(cedula, password);
         }
         catch (Exception ex)
         {

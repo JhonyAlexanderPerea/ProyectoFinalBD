@@ -107,7 +107,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         crudWindow.SetEntityType(entityType);
         await crudWindow.ShowDialog(GetWindow());
         await CargarTodosLosDatos();
-
+        
     }
     public async void EditItem()
     {

@@ -24,11 +24,11 @@ public class UserController
     }
 
 
-    public async Task<bool> Login(string email, string password)
+    public async Task<bool> Login(string cedula, string password)
     {
         try
         {
-            var user = await _repository.ValidateLogin(email, password);
+            var user = await _repository.ValidateLogin(cedula, password);
             if (user != null)
             {
                 _currentUser = user;

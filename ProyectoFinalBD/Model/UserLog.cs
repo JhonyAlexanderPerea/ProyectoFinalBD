@@ -12,7 +12,7 @@ public class UserLog : INotifyPropertyChanged
     private DateTime _date;
     private string _entry;
     private string? _userId;
-    private User? _user;
+    
 
     public string UserLogId
     {
@@ -65,19 +65,7 @@ public class UserLog : INotifyPropertyChanged
             }
         }
     }
-
-    public User? User
-    {
-        get => _user;
-        set
-        {
-            if (_user != value)
-            {
-                _user = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
