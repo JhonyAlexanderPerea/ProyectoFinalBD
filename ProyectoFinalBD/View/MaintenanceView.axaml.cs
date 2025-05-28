@@ -203,23 +203,6 @@ private async void OnNewMaintenance(object sender, RoutedEventArgs e)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public async Task AgregarMantenimiento(Maintenance maintenance)
-        {
-            var repository = new MaintenanceRepository();
-            await repository.Create(maintenance);
-        }
-
-        public async Task ActualizarMantenimiento(Maintenance maintenance)
-        {
-            var repository = new MaintenanceRepository();
-            await repository.Update(maintenance);
-        }
-
-        public async Task EliminarMantenimiento(string maintenanceId)
-        {
-            var repository = new MaintenanceRepository();
-            await repository.Delete(maintenanceId);
-        }
 
         
        

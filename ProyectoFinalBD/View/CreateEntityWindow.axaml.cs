@@ -43,6 +43,7 @@ namespace ProyectoFinalBD.View
         private UserLog userLog;
         private UserActionLogger userActionLogger;
         private string userId;
+        private bool defaultRole;
 
 
         public CreateEntityWindow()
@@ -141,6 +142,7 @@ namespace ProyectoFinalBD.View
                 if (string.IsNullOrEmpty(selectedEntity)) return;
                 
                 _entitySelector.IsEnabled = false;
+            
                 var fields = GetEntityFields(selectedEntity);
                 var textBoxes = new List<TextBox>();
 
@@ -1106,6 +1108,11 @@ namespace ProyectoFinalBD.View
         public void setUserId(string userId)
         {
             this.userId = userId;
+        }
+
+        public void SetDefaultRole(bool flag)
+        {
+            this.defaultRole = flag;
         }
     }
 } 

@@ -188,5 +188,18 @@ namespace ProyectoFinalBD
         {
             return this.userId;
         }
+
+        private void OpenViewRegistro(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ContentArea.Content = new RegisterUsersView();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al abrir ventana de registro: {ex.Message}");
+                // Opcionalmente mostrar un mensaje de error al usuario
+            }
+        }
     }
 }

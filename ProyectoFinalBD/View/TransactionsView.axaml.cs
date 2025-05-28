@@ -98,6 +98,11 @@ public partial class TransactionsView : UserControl, INotifyPropertyChanged, IRe
         var crudWindow = new CreateEntityWindow();
         crudWindow.SetEntityType(entityType);
         crudWindow.setUserId(userId);
+        if (entityType == "User")
+        {
+            crudWindow.SetDefaultRole(true);
+
+        }
         await crudWindow.ShowDialog(GetWindow());
         await CargarTodosLosDatos();
         
@@ -224,6 +229,7 @@ public partial class TransactionsView : UserControl, INotifyPropertyChanged, IRe
                     await new LoanController().EliminarPrestamo(prestamo.LoanId);
                     CargarPrestamosAsync();
                     break;
+                
 
                 default:
                     await ShowMessage("Error", "Tipo de entidad no soportado.");

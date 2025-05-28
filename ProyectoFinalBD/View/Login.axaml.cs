@@ -88,11 +88,5 @@ public partial class Login : Window
         _userController.Logout();
         System.Environment.Exit(0);
     }
-
-    private void OpenRegisterView(object? sender, RoutedEventArgs e)
-    {
-        Register register = new Register();
-        register.Show();
-        this.Close();
-    }
+    
 }

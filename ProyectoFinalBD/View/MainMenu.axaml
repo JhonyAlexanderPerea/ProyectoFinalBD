@@ -21,6 +21,7 @@
                     <Button Content="Transacciones" Click="OpenViewTransacciones" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
                     <Button Content="Reportes/Consultas" Click="OpenViewReportes" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
                     <Button Content="Utilidades" Click="OpenViewUtilidades" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
+                    <Button Content="Registro Usuario" Click="OpenViewRegistro" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
                    </StackPanel>
 
                 <Button Content="Cerrar sesión"

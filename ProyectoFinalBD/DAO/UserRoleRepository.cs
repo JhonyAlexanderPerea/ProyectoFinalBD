@@ -22,7 +22,8 @@ namespace ProyectoFinalBD.DAO
             try
             {
                 using var connection = new OracleConnection(_connectionString);
-                const string query = "SELECT * FROM RolUsuario";
+                // Especificar columnas explícitamente para evitar problemas
+                const string query = "SELECT codigoRolUsuario, nombreRolUsuario FROM RolUsuario";
 
                 using var command = new OracleCommand(query, connection);
                 await connection.OpenAsync();
@@ -30,14 +31,18 @@ namespace ProyectoFinalBD.DAO
 
                 while (await reader.ReadAsync())
                 {
-                    roles.Add(MapUserRoleFromReader(reader));
+                    roles.Add(new UserRole
+                    {
+                        // Asegúrate que estas propiedades existan en tu clase UserRole
+                        UserRoleId = reader["codigoRolUsuario"].ToString(),
+                        Name = reader["nombreRolUsuario"].ToString()
+                    });
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in GetAll UserRoles: {ex.Message}");
-                // Aquí podrías lanzar la excepción o manejarla según la necesidad
-                throw;
+                Console.WriteLine($"Error retrieving user roles: {ex.Message}");
+                throw; // Relanzar para manejo superior
             }
 
             return roles;

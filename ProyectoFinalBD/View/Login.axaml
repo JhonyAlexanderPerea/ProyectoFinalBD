@@ -56,14 +56,7 @@
                                 HorizontalAlignment="Center"
                                 HorizontalContentAlignment="Center"
                                 Width="150"/>
-                        <Button Content="Registrarse"
-                                CornerRadius="10"
-                                Click="OpenRegisterView"
-                                Background="CornflowerBlue"
-                                HorizontalContentAlignment="Center"
-                                Foreground="White"
-                                HorizontalAlignment="Center"
-                                Width="150"/>
+                        
                        
                     </StackPanel>
                     
