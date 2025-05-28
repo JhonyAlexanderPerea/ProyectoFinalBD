@@ -91,57 +91,95 @@ namespace ProyectoFinalBD.DAO
 
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                INSERT INTO Prestamo 
-                (codigoPrestamo, fechaPrestamo, fechaLimitePrestamo, costoMultaPrestamo, 
-                 equipo, usuario) 
-                VALUES 
-                (:loanId, :date, :dueDate, :penaltyCost, 
-                 :equipmentId, :userId)";
+        INSERT INTO Prestamo 
+        (codigoPrestamo, fechaPrestamo, fechaLimitePrestamo, costoMultaPrestamo, 
+         equipo, usuario) 
+        VALUES 
+        (:codigoPrestamo, :fechaPrestamo, :fechaLimitePrestamo, :costoMultaPrestamo, 
+         :equipo, :usuario)";
 
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("loanId", OracleDbType.Varchar2).Value = loan.LoanId;
-            command.Parameters.Add("date", OracleDbType.Date).Value = loan.Date;
-            command.Parameters.Add("dueDate", OracleDbType.Date).Value = loan.DueDate;
-            command.Parameters.Add("penaltyCost", OracleDbType.Decimal).Value = loan.PenaltyCost;
-            command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = loan.EquipmentId ?? (object)DBNull.Value;
-            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = loan.UserId ?? (object)DBNull.Value;
+            command.Parameters.Add("codigoPrestamo", OracleDbType.Varchar2).Value = loan.LoanId;
+            command.Parameters.Add("fechaPrestamo", OracleDbType.Date).Value = loan.Date;
+            command.Parameters.Add("fechaLimitePrestamo", OracleDbType.Date).Value = loan.DueDate;
+            command.Parameters.Add("costoMultaPrestamo", OracleDbType.Decimal).Value = loan.PenaltyCost;
+            command.Parameters.Add("equipo", OracleDbType.Varchar2).Value = loan.EquipmentId ?? (object)DBNull.Value;
+            command.Parameters.Add("usuario", OracleDbType.Varchar2).Value = loan.UserId ?? (object)DBNull.Value;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
         }
+
 
         public async Task Update(Loan loan)
+{
+    // Validaciones mejoradas
+    if (loan == null)
+        throw new ArgumentNullException(nameof(loan));
+
+    if (string.IsNullOrWhiteSpace(loan.LoanId))
+        throw new ArgumentException("El ID del préstamo es requerido", nameof(loan.LoanId));
+
+    if (loan.LoanId.Length > 10)
+        throw new ArgumentException("El ID del préstamo no puede exceder 10 caracteres", nameof(loan.LoanId));
+
+    if (loan.Date >= loan.DueDate)
+        throw new ArgumentException("La fecha límite debe ser posterior a la fecha de préstamo");
+
+    if (loan.PenaltyCost < 0)
+        throw new ArgumentException("El costo de multa no puede ser negativo", nameof(loan.PenaltyCost));
+
+    using var connection = new OracleConnection(_connectionString);
+    const string query = @"
+        UPDATE Prestamo 
+        SET fechaPrestamo = :fechaPrestamo,
+            fechaLimitePrestamo = :fechaLimitePrestamo,
+            costoMultaPrestamo = :costoMultaPrestamo,
+            equipo = :equipo,
+            usuario = :usuario
+        WHERE codigoPrestamo = :codigoPrestamo";
+
+    using var command = new OracleCommand(query, connection);
+    
+    // Parámetros alineados con nombres de columna
+    command.Parameters.Add("fechaPrestamo", OracleDbType.Date).Value = loan.Date;
+    command.Parameters.Add("fechaLimitePrestamo", OracleDbType.Date).Value = loan.DueDate;
+    command.Parameters.Add("costoMultaPrestamo", OracleDbType.Decimal).Value = loan.PenaltyCost;
+    command.Parameters.Add("equipo", OracleDbType.Varchar2).Value = loan.EquipmentId ?? (object)DBNull.Value;
+    command.Parameters.Add("usuario", OracleDbType.Varchar2).Value = loan.UserId ?? (object)DBNull.Value;
+    command.Parameters.Add("codigoPrestamo", OracleDbType.Varchar2).Value = loan.LoanId;
+
+    try
+    {
+        await connection.OpenAsync();
+        
+        // Usar transacción para mayor seguridad
+        using var transaction = await connection.BeginTransactionAsync();
+        try
         {
-            if (loan == null)
-                throw new ArgumentNullException(nameof(loan));
-
-            if (string.IsNullOrEmpty(loan.LoanId))
-                throw new ArgumentException("Loan ID cannot be null or empty", nameof(loan.LoanId));
-
-            if (loan.Date >= loan.DueDate)
-                throw new ArgumentException("Due date must be after loan date");
-
-            using var connection = new OracleConnection(_connectionString);
-            const string query = @"
-                UPDATE Prestamo 
-                SET fechaPrestamo = :date,
-                    fechaLimitePrestamo = :dueDate,
-                    costoMultaPrestamo = :penaltyCost,
-                    equipo = :equipmentId,
-                    usuario = :userId
-                WHERE codigoPrestamo = :loanId";
-
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("date", OracleDbType.Date).Value = loan.Date;
-            command.Parameters.Add("dueDate", OracleDbType.Date).Value = loan.DueDate;
-            command.Parameters.Add("penaltyCost", OracleDbType.Decimal).Value = loan.PenaltyCost;
-            command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = loan.EquipmentId ?? (object)DBNull.Value;
-            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = loan.UserId ?? (object)DBNull.Value;
-            command.Parameters.Add("loanId", OracleDbType.Varchar2).Value = loan.LoanId;
-
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+            int affectedRows = await command.ExecuteNonQueryAsync();
+            
+            if (affectedRows == 0)
+                throw new KeyNotFoundException("No se encontró el préstamo con el ID especificado");
+                
+            await transaction.CommitAsync();
         }
+        catch (OracleException ex) when (ex.Number == 2290) // Violación de CHECK constraint
+        {
+            await transaction.RollbackAsync();
+            throw new ArgumentException("Las fechas no cumplen con la validación: la fecha límite debe ser posterior a la fecha de préstamo");
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+    catch (OracleException ex) when (ex.Number == 1) // Violación de clave única
+    {
+        throw new ArgumentException("El ID del préstamo ya existe", nameof(loan.LoanId), ex);
+    }
+}
 
         public async Task Delete(string loanId)
         {

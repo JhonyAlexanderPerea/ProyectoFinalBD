@@ -14,6 +14,7 @@ using Oracle.ManagedDataAccess.Client;
 using ProyectoFinalBD.Controllers;
 using ProyectoFinalBD.Model;
 using ProyectoFinalBD.DAO;
+using ProyectoFinalBD.util;
 using Location = ProyectoFinalBD.Model.Location;
 
 
@@ -39,9 +40,11 @@ namespace ProyectoFinalBD.View
         private readonly SupplierController _supplierController;
         private readonly UserController _userController;
         private readonly UserLogController _userLogController;
-        
-        
-        
+        private UserLog userLog;
+        private UserActionLogger userActionLogger;
+        private string userId;
+
+
         public CreateEntityWindow()
         {
             Title = "Crear Entidad";
@@ -61,6 +64,8 @@ namespace ProyectoFinalBD.View
             _supplierController = new SupplierController();
             _userController = new UserController();
             _userLogController = new UserLogController();
+            userActionLogger = new UserActionLogger();
+
 
 
             _entityFields = new Dictionary<string, List<TextBox>>();
@@ -203,6 +208,8 @@ namespace ProyectoFinalBD.View
 
                 await ValidateFields(selectedEntity, values);
                 await CreateEntity(selectedEntity, fields, values);
+                userLog = await userActionLogger.createInfoUserLog("Creó un registro de: "+ selectedEntity, userId);
+                await _userLogController.createUserLog(userLog);
                 Close();
             }
             catch (Exception ex)
@@ -1094,6 +1101,11 @@ namespace ProyectoFinalBD.View
                 }
 
             // Implementar los demás casos...
+        }
+
+        public void setUserId(string userId)
+        {
+            this.userId = userId;
         }
     }
 } 

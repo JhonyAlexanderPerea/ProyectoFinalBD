@@ -13,6 +13,7 @@ using ProyectoFinalBD.Model;
 using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
+using ProyectoFinalBD.util;
 using ReactiveUI;
 using Location = ProyectoFinalBD.Model.Location;
 
@@ -36,9 +37,16 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     private ObservableCollection<User> _users = new();
     private ObservableCollection<UserLog> _userLogs = new();
     private ObservableCollection<UserRole> _userRoles = new();
-    
+    private UserLog userLog;
+    private UserActionLogger userActionLogger;
+    private MainMenu mainMenu;
+    private readonly UserLogController _userLogController;
     private object _selectedItem;
     private IReactiveObject _reactiveObjectImplementation;
+    private string userId;
+    
+
+  
 
     public object SelectedItem
     {
@@ -50,15 +58,16 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
     
     public ReactiveCommand<string, Unit> CreateCommand { get; }
-    public Entities()
+    public Entities(string userId)
     {
         InitializeComponent();
-        AddCommand = ReactiveCommand.Create(AddItem);
-        AddCommand = ReactiveCommand.Create(EditItem);
 
-    
+        this.userId = userId;
         CreateCommand = ReactiveCommand.CreateFromTask<string>(CreateEntityAsync);
         DataContext = this;
+        userActionLogger = new UserActionLogger();
+        mainMenu = new MainMenu();
+        _userLogController = new UserLogController();
 
         Loaded += async (s, e) =>
         {
@@ -91,20 +100,11 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         );
     }
     
-    private async void AddItem()
-    {
-        // Ejemplo: abrir ventana para agregar un nuevo mantenimiento, etc.
-  
-       // var crudWindow = new CreateEntityWindow();
-        //await crudWindow.ShowDialog(parentWindow);
-       // crudWindow.setEntity();
-        
-        Console.WriteLine("Agregar ítem");
-    }
     public async Task Create(string entityType)
     {
         var crudWindow = new CreateEntityWindow();
         crudWindow.SetEntityType(entityType);
+        crudWindow.setUserId(userId);
         await crudWindow.ShowDialog(GetWindow());
         await CargarTodosLosDatos();
         
@@ -192,6 +192,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             }
 
             var editWindow = new EditEntityWindow(entityType, entityId);
+            editWindow.setUserId(userId);
             await editWindow.ShowDialog(GetWindow());
             
             // Recargar los datos después de editar
@@ -229,9 +230,10 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         if (!confirmDelete) return;
 
         try
-        {
+        {   logUser(entityType, userId);
             switch (entityType)
             {
+                    
                 case "Maintenance":
                     var mantenimiento = (Maintenance)_selectedItem;
                     await new MaintenanceController().EliminarMantenimiento(mantenimiento.MaintenanceId);
@@ -310,6 +312,12 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         {
             await ShowError("Error", $"Error al eliminar el elemento: {ex.Message}");
         }
+    }
+
+    private async Task logUser(string entity, string userId)
+    {
+        userLog = await userActionLogger.createInfoUserLog("Eliminó un registro de: " + entity, userId);
+        await _userLogController.createUserLog(userLog);
     }
 
     public ObservableCollection<EquipmentStatus> EquipmentStatus

@@ -40,7 +40,11 @@ namespace ProyectoFinalBD.View
         private readonly SupplierController _supplierController;
         private readonly UserController _userController;
         private readonly UserLogController _userLogController;
-        
+        private UserLog userLog;
+        private UserActionLogger userActionLogger;
+        private MainMenu mainMenu;
+        private string userId;
+
         public EditEntityWindow(string entityType = null, string entityId = null)
         {
             Title = "Editar Entidad";
@@ -60,6 +64,8 @@ namespace ProyectoFinalBD.View
             _supplierController = new SupplierController();
             _userController = new UserController();
             _userLogController = new UserLogController();
+            userActionLogger = new UserActionLogger();
+            mainMenu = new MainMenu();
 
             _entityFields = new Dictionary<string, List<Control>>();
             _currentEntityId = entityId;
@@ -454,6 +460,8 @@ namespace ProyectoFinalBD.View
 
                 await ValidateFields(selectedEntity, values);
                 await UpdateEntity(selectedEntity, fields, values);
+                userLog = await userActionLogger.createInfoUserLog("Se actualizó un registro de: " + selectedEntity, userId);
+                await _userLogController.createUserLog(userLog);
                 Close();
             }
             catch (Exception ex)
@@ -1073,6 +1081,11 @@ namespace ProyectoFinalBD.View
         {
             if (value.Length > maxLength)
                 throw new ArgumentException($"El campo {fieldName} no puede exceder {maxLength} caracteres");
+        }
+
+        public void setUserId(string userId)
+        {
+            this.userId = userId;
         }
     }
 }

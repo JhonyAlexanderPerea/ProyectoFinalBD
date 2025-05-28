@@ -25,6 +25,7 @@
         <PackageReference Include="Oracle.EntityFrameworkCore" Version="9.23.80" />
         <PackageReference Include="Oracle.ManagedDataAccess" Version="23.8.0" />
         <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.8.0" />
+        <PackageReference Include="QuestPDF" Version="2025.5.0" />
         <PackageReference Include="ReactiveUI" Version="20.2.45" />
         <PackageReference Include="SQL" Version="1.0.0.1" />
         <PackageReference Include="SqlConnection" Version="1.0.4">

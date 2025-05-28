@@ -64,21 +64,20 @@ namespace ProyectoFinalBD.DAO
         {
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
-                INSERT INTO LogUsuario 
-                (codigoLogUser, fecha, registro, usuario) 
-                VALUES 
-                (:userLogId, :date, :entry, :userId)";
+        INSERT INTO LogUsuario 
+        (codigoLogUser, fecha, registro, usuario) 
+        VALUES 
+        (:codigoLogUser, :fecha, :registro, :usuario)";
 
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
-            command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
-            command.Parameters.Add("entry", OracleDbType.Clob).Value = userLog.Entry; // Changed to Clob
-            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
+            command.Parameters.Add("codigoLogUser", OracleDbType.Varchar2).Value = userLog.UserLogId;
+            command.Parameters.Add("fecha", OracleDbType.Date).Value = userLog.Date;
+            command.Parameters.Add("registro", OracleDbType.Clob).Value = userLog.Entry;
+            command.Parameters.Add("usuario", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
         }
-
         public async Task Delete(string userLogId)
         {
             using var connection = new OracleConnection(_connectionString);
@@ -128,20 +127,31 @@ namespace ProyectoFinalBD.DAO
 
         public async Task Update(UserLog userLog)
         {
+            if (userLog == null)
+                throw new ArgumentNullException(nameof(userLog));
+
+            // Validaciones adicionales recomendadas
+            if (string.IsNullOrWhiteSpace(userLog.UserLogId))
+                throw new ArgumentException("ID de log de usuario es requerido");
+    
+            if (userLog.UserLogId.Length > 10)
+                throw new ArgumentException("ID no puede exceder 10 caracteres");
+
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
         UPDATE LogUsuario
         SET 
-            fecha = :date,
-            registro = :entry,
-            usuario = :userId
-        WHERE codigoLogUser = :userLogId";
+            fecha = :fecha,
+            registro = :registro,
+            usuario = :usuario
+        WHERE codigoLogUser = :codigoLogUser";
 
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
-            command.Parameters.Add("entry", OracleDbType.Clob).Value = userLog.Entry;
-            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
-            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
+            command.Parameters.Add("fecha", OracleDbType.Date).Value = userLog.Date;
+            command.Parameters.Add("registro", OracleDbType.Clob).Value = userLog.Entry;
+            command.Parameters.Add("usuario", OracleDbType.Varchar2).Value = 
+                userLog.UserId ?? (object)DBNull.Value;
+            command.Parameters.Add("codigoLogUser", OracleDbType.Varchar2).Value = userLog.UserLogId;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
