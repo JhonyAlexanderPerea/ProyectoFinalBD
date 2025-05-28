@@ -19,7 +19,7 @@ using Location = ProyectoFinalBD.Model.Location;
 
 namespace ProyectoFinalBD.View;
 
-public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveObject
+public partial class TransactionsView : UserControl, INotifyPropertyChanged, IReactiveObject
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,7 +39,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     private ObservableCollection<UserRole> _userRoles = new();
     private UserLog userLog;
     private UserActionLogger userActionLogger;
-    private MainMenu mainMenu;
     private readonly UserLogController _userLogController;
     private object _selectedItem;
     private IReactiveObject _reactiveObjectImplementation;
@@ -58,7 +57,8 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
     
     public ReactiveCommand<string, Unit> CreateCommand { get; }
-    public Entities(string userId)
+    
+    public TransactionsView(string userId)
     {
         InitializeComponent();
 
@@ -66,7 +66,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         CreateCommand = ReactiveCommand.CreateFromTask<string>(CreateEntityAsync);
         DataContext = this;
         userActionLogger = new UserActionLogger();
-        mainMenu = new MainMenu();
         _userLogController = new UserLogController();
 
         Loaded += async (s, e) =>
@@ -85,18 +84,12 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     private async Task CargarTodosLosDatos()
     {
         await Task.WhenAll(
-            CargarMantenimientosAsync(),
-            CargarTiposEquipoAsync(),
-            CargarUbicacionesAsync(),
             CargarEstadosEquipoAsync(),
             CargarReportesDaniosAsync(),
             CargarEquiposAsync(),
-            CargarProveedoresAsync(),
             CargarUsuariosAsync(),
-            CargarMunicipiosAsync(),
             CargarDevolucionesAsync(),
-            CargarPrestamosAsync(),
-            CargarRegistrosUsuarioAsync()
+            CargarPrestamosAsync()
         );
     }
     
@@ -140,50 +133,20 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
                 entityId = equipmentStatus.EquipmentStatusId;
                 entityType = "EquipmentStatus";
             }
-            else if (SelectedItem is EquipmentType equipmentType)
-            {
-                entityId = equipmentType.EquipmentTypeId;
-                entityType = "EquipmentType";
-            }
             else if (SelectedItem is Loan loan)
             {
                 entityId = loan.LoanId;
                 entityType = "Loan";
-            }
-            else if (SelectedItem is Location location)
-            {
-                entityId = location.LocationId;
-                entityType = "Location";
-            }
-            else if (SelectedItem is Maintenance maintenance)
-            {
-                entityId = maintenance.MaintenanceId;
-                entityType = "Maintenance";
-            }
-            else if (SelectedItem is Municipality municipality)
-            {
-                entityId = municipality.MunicipalityId;
-                entityType = "Municipality";
             }
             else if (SelectedItem is Return return_)
             {
                 entityId = return_.ReturnId;
                 entityType = "Return";
             }
-            else if (SelectedItem is Supplier supplier)
-            {
-                entityId = supplier.SupplierId;
-                entityType = "Supplier";
-            }
             else if (SelectedItem is User user)
             {
                 entityId = user.UserId;
                 entityType = "User";
-            }
-            else if (SelectedItem is UserLog userLog)
-            {
-                entityId = userLog.UserLogId;
-                entityType = "UserLog";
             }
             else
             {
@@ -195,7 +158,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             editWindow.setUserId(userId);
             await editWindow.ShowDialog(GetWindow());
             
-            // Recargar los datos después de editar
             await CargarTodosLosDatos();
         });
     }
@@ -233,25 +195,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         {   logUser(entityType, userId);
             switch (entityType)
             {
-                    
-                case "Maintenance":
-                    var mantenimiento = (Maintenance)_selectedItem;
-                    await new MaintenanceController().EliminarMantenimiento(mantenimiento.MaintenanceId);
-                    CargarMantenimientosAsync();
-                    break;
-
-                case "EquipmentType":
-                    var tipoEquipo = (EquipmentType)_selectedItem;
-                    await new EquipmentTypeController().EliminarTipoEquipo(tipoEquipo.EquipmentTypeId);
-                    CargarTiposEquipoAsync();
-                    break;
-
-                case "Location":
-                    var ubicacion = (Location)_selectedItem;
-                    await new LocationController().EliminarUbicacion(ubicacion.LocationId);
-                    CargarUbicacionesAsync();
-                    break;
-
                 case "Equipment":
                     var equipo = (Equipment)_selectedItem;
                     await new EquipmentController().EliminarEquipo(equipo.EquipmentId);
@@ -263,23 +206,11 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
                     await new DamageReportController().EliminarReporteDaño(reporte.DamageReportId);
                     CargarReportesDaniosAsync();
                     break;
-
-                case "Supplier":
-                    var proveedor = (Supplier)_selectedItem;
-                    await new SupplierController().EliminarProveedor(proveedor.SupplierId);
-                    CargarProveedoresAsync();
-                    break;
-
+                
                 case "User":
                     var usuario = (User)_selectedItem;
                     await new UserController().EliminarUsuario(usuario.UserId);
                     CargarUsuariosAsync();
-                    break;
-
-                case "Municipality":
-                    var municipio = (Municipality)_selectedItem;
-                    await new MunicipalityController().EliminarMunicipio(municipio.MunicipalityId);
-                    CargarMunicipiosAsync();
                     break;
 
                 case "Return":
@@ -292,18 +223,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
                     var prestamo = (Loan)_selectedItem;
                     await new LoanController().EliminarPrestamo(prestamo.LoanId);
                     CargarPrestamosAsync();
-                    break;
-
-                case "UserLog":
-                    var registro = (UserLog)_selectedItem;
-                    await new UserLogController().EliminarRegistro(registro.UserLogId);
-                    CargarRegistrosUsuarioAsync();
-                    break;
-                
-                case "EquipmentStatus":
-                    var estadoEquipo = (EquipmentStatus)_selectedItem;
-                    await new EquipmentStatusController().EliminarEstado(estadoEquipo.EquipmentStatusId);
-                    CargarEstadosEquipoAsync();
                     break;
 
                 default:
@@ -365,34 +284,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         }
     }
 
-
-
-    public ObservableCollection<Maintenance> Mantenimientos
-    {
-        get => _mantenimientos;
-        set
-        {
-            if (_mantenimientos != value)
-            {
-                _mantenimientos = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public ObservableCollection<EquipmentType> EquipmentType
-    {
-        get => _equipmentType;
-        set
-        {
-            if (_equipmentType != value)
-            {
-                _equipmentType = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
     public ObservableCollection<Loan> Loans
     {
         get => _loans;
@@ -405,32 +296,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             }
         }
     }
-
-    public ObservableCollection<Location> Locations
-    {
-        get => _locations;
-        set
-        {
-            if (_locations != value)
-            {
-                _locations = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public ObservableCollection<Municipality> Municipalities
-    {
-        get => _municipalities;
-        set
-        {
-            if (_municipalities != value)
-            {
-                _municipalities = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    
 
     public ObservableCollection<Return> Returns
     {
@@ -440,19 +306,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             if (_returns != value)
             {
                 _returns = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public ObservableCollection<Supplier> Suppliers
-    {
-        get => _suppliers;
-        set
-        {
-            if (_suppliers != value)
-            {
-                _suppliers = value;
                 OnPropertyChanged();
             }
         }
@@ -470,34 +323,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             }
         }
     }
-
-    public ObservableCollection<UserLog> UserLogs
-    {
-        get => _userLogs;
-        set
-        {
-            if (_userLogs != value)
-            {
-                _userLogs = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public ObservableCollection<UserRole> UserRoles
-    {
-        get => _userRoles;
-        set
-        {
-            if (_userRoles != value)
-            {
-                _userRoles = value;
-                OnPropertyChanged();
-            }
-        }
-    }
     
-
 
     private async void OnTabSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
@@ -507,15 +333,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         {
             switch (selectedTab.Header?.ToString())
             {
-                case "Mantenimiento":
-                    await CargarMantenimientosAsync();
-                    break;
-                case "Tipo de Equipo":
-                    await CargarTiposEquipoAsync();
-                    break;
-                case "Ubicación":
-                    await CargarUbicacionesAsync();
-                    break;
                 case "Estado de Equipo":  
                     await CargarEstadosEquipoAsync();
                     break;
@@ -525,23 +342,14 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
                 case "Equipos":
                     await CargarEquiposAsync();
                     break;
-                case "Proveedores":
-                    await CargarProveedoresAsync();
-                    break;
                 case "Usuarios":
                     await CargarUsuariosAsync();
-                    break;
-                case "Municipios":
-                    await CargarMunicipiosAsync();
                     break;
                 case "Devoluciones":
                     await CargarDevolucionesAsync();
                     break;
                 case "Préstamos":
                     await CargarPrestamosAsync();
-                    break;
-                case "Log de Usuarios":
-                    await CargarRegistrosUsuarioAsync();
                     break;
                 default:
                     Console.WriteLine($"Tab no manejada: {selectedTab.Header}");
@@ -559,48 +367,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         }
 
     }
-
-
-    private async Task CargarMantenimientosAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de mantenimientos...");
-
-            var controller = new MaintenanceController();
-            var lista = await controller.ObtenerMantenimientos();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron datos de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.MaintenanceId}, Fecha: {item.Date}, Costo: {item.Cost}");
-                }
-            }
-
-            // Crear y asignar ObservableCollection
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Mantenimientos = new ObservableCollection<Maintenance>(lista);
-            });
-
-            Console.WriteLine($"Se asignaron {Mantenimientos.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar mantenimientos: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-
-    }
+    
 
     private async Task CargarReportesDaniosAsync()
     {
@@ -724,46 +491,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         }
     }
 
-    // Para EquipmentTypeController
-    private async Task CargarTiposEquipoAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de tipos de equipo...");
-
-            var controller = new EquipmentTypeController();
-            var lista = (await controller.ObtenerTiposEquipo()).ToList();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron tipos de equipo de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.EquipmentTypeId}, " +
-                                      $"Descripción: {item.Description}");
-                }
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                EquipmentType = new ObservableCollection<EquipmentType>(lista);
-            });
-
-            Console.WriteLine($"Se asignaron {EquipmentType.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar Tipos de Equipo: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-    }
 
     // Para LoanController
     private async Task CargarPrestamosAsync()
@@ -797,86 +524,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cargar Prestamos: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-    }
-
-    // Para LocationController
-    private async Task CargarUbicacionesAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de ubicaciones...");
-
-            var controller = new LocationController();
-            var lista = (await controller.ObtenerUbicaciones()).ToList();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron ubicaciones de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.LocationId}, " +
-                                      $"Nombre: {item.Name}, " +
-                                      $"Municipio: {item.LocationId}");
-                }
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() => { Locations = new ObservableCollection<Location>(lista); });
-
-            Console.WriteLine($"Se asignaron {Locations.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar Ubicaciones: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-    }
-
-    // Para MunicipalityController
-    private async Task CargarMunicipiosAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de municipios...");
-
-            var controller = new MunicipalityController();
-            var lista = (await controller.ObtenerMunicipios()).ToList();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron municipios de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.MunicipalityId}, " +
-                                      $"Nombre: {item.Name}");
-                }
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Municipalities = new ObservableCollection<Municipality>(lista);
-            });
-
-            Console.WriteLine($"Se asignaron {Municipalities.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar Municipios: {ex.Message}");
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
@@ -923,45 +570,6 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         }
     }
 
-    // Para SupplierController
-    private async Task CargarProveedoresAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de proveedores...");
-
-            var controller = new SupplierController();
-            var lista = (await controller.ObtenerProveedores()).ToList();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron proveedores de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.SupplierId}, " +
-                                      $"Nombre: {item.Name}, " +
-                                      $"Contacto: {item.Contact}");
-                }
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() => { Suppliers = new ObservableCollection<Supplier>(lista); });
-
-            Console.WriteLine($"Se asignaron {Suppliers.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar Proveedores: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-    }
-
     // Para UserController
     private async Task CargarUsuariosAsync()
     {
@@ -1000,46 +608,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
             });
         }
     }
-
-    // Para UserLogController
-    private async Task CargarRegistrosUsuarioAsync()
-    {
-        try
-        {
-            Console.WriteLine("Iniciando carga de registros de usuario...");
-
-            var controller = new UserLogController();
-            var lista = (await controller.ObtenerRegistrosUsuario()).ToList();
-
-            if (lista == null || lista.Count == 0)
-            {
-                Console.WriteLine("No se recuperaron registros de usuario de la base de datos.");
-            }
-            else
-            {
-                Console.WriteLine($"Datos recuperados: {lista.Count} registros");
-                foreach (var item in lista)
-                {
-                    Console.WriteLine($"ID: {item.UserLogId}, " +
-                                      $"Usuario: {item.UserId}, " +
-                                      $"Fecha: {item.Date}");
-                }
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() => { UserLogs = new ObservableCollection<UserLog>(lista); });
-
-            Console.WriteLine($"Se asignaron {UserLogs.Count} registros al ObservableCollection.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar Logs Usuarios: {ex.Message}");
-            await Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await ShowError("Error", $"Error al cargar los datos: {ex.Message}");
-            });
-        }
-    }
-
+    
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -93,25 +93,43 @@ namespace ProyectoFinalBD.DAO
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task Delete(string statusId)
+        public async Task<bool> Delete(string equipmentStatusId)
         {
-            using var connection = new OracleConnection(_connectionString);
-            const string query = "DELETE FROM EstadoEquipo WHERE codigoEstadoEquipo = :statusId";
+            try
+            {
+                using var connection = new OracleConnection(_connectionString);
+                await connection.OpenAsync();
 
-            using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = statusId;
+                // Query corregida usando el nombre exacto de columna de tu esquema
+                const string deleteQuery = @"
+            DELETE FROM EstadoEquipo 
+            WHERE codigoEstadoEquipo = :CODIGO";
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+                using var command = new OracleCommand(deleteQuery, connection);
+                command.Parameters.Add("CODIGO", OracleDbType.Varchar2).Value = equipmentStatusId;
+
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+                return rowsAffected > 0;
+            }
+            catch (OracleException ex) when (ex.Number == 2292) // Violación de integridad referencial
+            {
+                Console.WriteLine($"Error al eliminar: Existen equipos asociados a este estado. {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar EquipmentStatus: {ex.Message}");
+                return false;
+            }
         }
 
         public async Task<bool> Exists(string statusId)
         {
             using var connection = new OracleConnection(_connectionString);
-            const string query = "SELECT COUNT(1) FROM EstadoEquipo WHERE codigoEstadoEquipo = :statusId";
+            const string query = "SELECT COUNT(1) FROM EstadoEquipo WHERE codigoEstadoEquipo = :CODIGOESTADOEQUIPO";
 
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("statusId", OracleDbType.Varchar2).Value = statusId;
+            command.Parameters.Add("CODIGOESTADOEQUIPO", OracleDbType.Varchar2).Value = statusId;
 
             await connection.OpenAsync();
             return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;

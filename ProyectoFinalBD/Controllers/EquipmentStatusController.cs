@@ -41,7 +41,21 @@ namespace ProyectoFinalBD.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR UN ESTADO DE EQUIPO: ERROR -> {e}" );
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR UN ESTADO DE EQUIPO: ERROR -> " + e );
+                throw;
+            }
+        }
+
+        public async Task EliminarEstado(string equipmentStatusId)
+        {
+            
+            try
+            {   Console.WriteLine("LLega a eliminar");
+                await _repository.Delete(equipmentStatusId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ELIMINA UN ESTADO DE EQUIPO: ERROR -> "+ e );
                 throw;
             }
         }

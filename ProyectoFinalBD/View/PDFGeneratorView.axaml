@@ -1,16 +1,16 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ProyectoFinalBD.View.PDFGeneratorView">
-    
+
     <DockPanel Margin="20">
         <StackPanel DockPanel.Dock="Top" Spacing="20">
             <TextBlock Text="Generación de Reportes"
                        FontSize="24"
                        FontWeight="Bold"
-                       HorizontalAlignment="Center"/>
-            
+                       HorizontalAlignment="Center" />
+
             <StackPanel Orientation="Horizontal" Spacing="20">
-                <ComboBox x:Name="ReportTypeCombo" 
+                <ComboBox x:Name="ReportTypeCombo"
                           Width="300"
                           PlaceholderText="Seleccione un tipo de reporte">
                     <ComboBoxItem>Equipos más prestados</ComboBoxItem>
@@ -19,35 +19,113 @@
                     <ComboBoxItem>Préstamos activos por tipo de equipo</ComboBoxItem>
                     <ComboBoxItem>Estadísticas de mantenimiento de equipos</ComboBoxItem>
                 </ComboBox>
-                
+
                 <Button x:Name="GeneratePdfButton"
                         Content="Generar PDF"
                         IsEnabled="False">
                     <Button.Styles>
                         <Style Selector="Button">
-                            <Setter Property="Background" Value="#2E7D32"/>
-                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="#2E7D32" />
+                            <Setter Property="Foreground" Value="White" />
                         </Style>
                         <Style Selector="Button:pointerover">
-                            <Setter Property="Background" Value="#2E7D32"/>
+                            <Setter Property="Background" Value="#2E7D32" />
                         </Style>
                         <Style Selector="Button:disabled">
-                            <Setter Property="Background" Value="#A5D6A7"/>
+                            <Setter Property="Background" Value="#A5D6A7" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+            </StackPanel>
+
+            <!-- Botones personalizados para las 5 nuevas consultas -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <Button x:Name="BtnEquiposConMasFallas" Content="Equipos con más fallas">
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="#1565C0" /> <!-- Azul intenso -->
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1976D2" />
+                        </Style>
+                        <Style Selector="Button:disabled">
+                            <Setter Property="Background" Value="#90CAF9" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <Button x:Name="BtnGastoMantenimientoPorProveedor" Content="Gasto por proveedor">
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="#1565C0" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1976D2" />
+                        </Style>
+                        <Style Selector="Button:disabled">
+                            <Setter Property="Background" Value="#90CAF9" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <Button x:Name="BtnPrestamosFueraDePlazo" Content="Préstamos fuera de plazo">
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="#1565C0" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1976D2" />
+                        </Style>
+                        <Style Selector="Button:disabled">
+                            <Setter Property="Background" Value="#90CAF9" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <Button x:Name="BtnEquiposPorMunicipio" Content="Equipos por municipio">
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="#1565C0" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1976D2" />
+                        </Style>
+                        <Style Selector="Button:disabled">
+                            <Setter Property="Background" Value="#90CAF9" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <Button x:Name="BtnAccesosPorRol" Content="Accesos por rol">
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="#1565C0" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1976D2" />
+                        </Style>
+                        <Style Selector="Button:disabled">
+                            <Setter Property="Background" Value="#90CAF9" />
                         </Style>
                     </Button.Styles>
                 </Button>
             </StackPanel>
         </StackPanel>
-        
-        <Border Background="LightGray" 
-                Margin="0,20,0,0" 
+
+        <Border Background="LightGray"
+                Margin="0,20,0,0"
                 Padding="10"
                 CornerRadius="5">
             <TextBlock x:Name="PreviewText"
                        Text="Seleccione un reporte para ver la vista previa"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                       VerticalAlignment="Center" />
         </Border>
     </DockPanel>
-    
+
 </UserControl>

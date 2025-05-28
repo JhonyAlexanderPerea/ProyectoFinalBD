@@ -42,8 +42,9 @@ namespace ProyectoFinalBD
 
         private async void OpenViewTransacciones(object? sender, RoutedEventArgs e)
         {
-            var crudWindow = new CreateEntityWindow();
-            await crudWindow.ShowDialog(this); 
+            ContentArea.Content = new TransactionsView(userId);
+            
+            
         }
 
         private  void OpenViewReportes(object? sender, RoutedEventArgs e)

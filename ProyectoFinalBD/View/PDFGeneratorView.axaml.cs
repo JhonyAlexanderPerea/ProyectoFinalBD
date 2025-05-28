@@ -16,11 +16,17 @@ namespace ProyectoFinalBD.View
 {
     public partial class PDFGeneratorView : UserControl
     {
-        
         private readonly PDFQueries _pdfQueries;
         private ComboBox? _reportTypeCombo;
         private Button? _generatePdfButton;
         private TextBlock? _previewText;
+
+        // Nuevos botones para consultas sin PDF
+        private Button? _btnEquiposMasFallas;
+        private Button? _btnCostosMantenimiento;
+        private Button? _btnPrestamosFueraPlazo;
+        private Button? _btnEquiposPorMunicipio;
+        private Button? _btnRegistroAccesos;
 
         public PDFGeneratorView()
         {
@@ -32,12 +38,34 @@ namespace ProyectoFinalBD.View
             _generatePdfButton = this.FindControl<Button>("GeneratePdfButton");
             _previewText = this.FindControl<TextBlock>("PreviewText");
 
+            _btnEquiposMasFallas = this.FindControl<Button>("BtnEquiposMasFallas");
+            _btnCostosMantenimiento = this.FindControl<Button>("BtnCostosMantenimiento");
+            _btnPrestamosFueraPlazo = this.FindControl<Button>("BtnPrestamosFueraPlazo");
+            _btnEquiposPorMunicipio = this.FindControl<Button>("BtnEquiposPorMunicipio");
+            _btnRegistroAccesos = this.FindControl<Button>("BtnRegistroAccesos");
+
             if (_reportTypeCombo != null && _generatePdfButton != null)
             {
                 _reportTypeCombo.SelectionChanged += OnReportTypeChanged;
                 _generatePdfButton.Click += OnGeneratePdfClick;
                 _generatePdfButton.IsEnabled = false;
             }
+
+            // Eventos para los nuevos botones (solo vista previa)
+            if (_btnEquiposMasFallas != null)
+                _btnEquiposMasFallas.Click += async (_, __) => await ShowPreviewNoPdfAsync("Equipos con más fallas");
+
+            if (_btnCostosMantenimiento != null)
+                _btnCostosMantenimiento.Click += async (_, __) => await ShowPreviewNoPdfAsync("Costos totales en mantenimiento");
+
+            if (_btnPrestamosFueraPlazo != null)
+                _btnPrestamosFueraPlazo.Click += async (_, __) => await ShowPreviewNoPdfAsync("Equipos prestados fuera del plazo");
+
+            if (_btnEquiposPorMunicipio != null)
+                _btnEquiposPorMunicipio.Click += async (_, __) => await ShowPreviewNoPdfAsync("Número de equipos por municipio");
+
+            if (_btnRegistroAccesos != null)
+                _btnRegistroAccesos.Click += async (_, __) => await ShowPreviewNoPdfAsync("Registro de accesos por rol");
         }
 
         private void InitializeComponent()
@@ -57,6 +85,7 @@ namespace ProyectoFinalBD.View
             }
         }
 
+        // Vista previa para consultas PDF
         private async Task UpdatePreviewAsync()
         {
             try
@@ -70,11 +99,11 @@ namespace ProyectoFinalBD.View
 
                 DataTable dt = selectedReport switch
                 {
-                    "Equipos más prestados" =>  _pdfQueries.GetEquiposMasPrestados(),
-                    "Usuarios con más préstamos" =>  _pdfQueries.GetUsuariosConMasPrestamos(),
-                    "Reporte de equipos en reparación" =>  _pdfQueries.GetEquiposEnReparacion(),
+                    "Equipos más prestados" => _pdfQueries.GetEquiposMasPrestados(),
+                    "Usuarios con más préstamos" => _pdfQueries.GetUsuariosConMasPrestamos(),
+                    "Reporte de equipos en reparación" => _pdfQueries.GetEquiposEnReparacion(),
                     "Préstamos activos por tipo de equipo" => _pdfQueries.GetPrestamosActivosPorTipoEquipo(),
-                    "Estadísticas de mantenimiento de equipos" =>  _pdfQueries.GetEstadisticasMantenimiento(),
+                    "Estadísticas de mantenimiento de equipos" => _pdfQueries.GetEstadisticasMantenimiento(),
                     _ => null
                 };
 
@@ -84,10 +113,7 @@ namespace ProyectoFinalBD.View
                     return;
                 }
 
-                // Para vista previa, mostramos por ejemplo el conteo de filas y columnas:
-                _previewText.Text = $"Vista previa:\nColumnas: {dt.Columns.Count}\nFilas: {dt.Rows.Count}";
-
-                // Opcional: mostrar una tabla simple o algún resumen aquí
+                _previewText.Text = DataTableToString(dt);
             }
             catch (Exception ex)
             {
@@ -96,9 +122,74 @@ namespace ProyectoFinalBD.View
             }
         }
 
+        // Vista previa para consultas sin PDF
+        private async Task ShowPreviewNoPdfAsync(string consulta)
+        {
+            try
+            {
+                if (_previewText == null)
+                    return;
+
+                _previewText.Text = "Cargando vista previa...";
+
+                DataTable dt = consulta switch
+                {
+                    "Equipos con más fallas" => _pdfQueries.GetEquiposConMasFallasPorTipo(),
+                    "Costos totales en mantenimiento" => _pdfQueries.GetCostosMantenimientoPorProveedor(),
+                    "Equipos prestados fuera del plazo" => _pdfQueries.GetEquiposFueraDePlazo(),
+                    "Número de equipos por municipio" => _pdfQueries.GetEquiposPorMunicipioYTipo(),
+                    "Registro de accesos por rol" => _pdfQueries.GetAccesosPorRol(),
+                    _ => null
+                };
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    _previewText.Text = "No hay datos para mostrar.";
+                    return;
+                }
+
+                _previewText.Text = DataTableToString(dt);
+            }
+            catch (Exception ex)
+            {
+                if (_previewText != null)
+                    _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
+            }
+        }
+
+        // Método auxiliar para mostrar tabla en texto simple
+        private string DataTableToString(DataTable dt)
+        {
+            var lines = new List<string>();
+
+            // Encabezados
+            foreach (DataColumn col in dt.Columns)
+            {
+                lines.Add(col.ColumnName.PadRight(25));
+            }
+            lines.Add("\n");
+
+            // Filas (limitadas a 20 filas para no saturar)
+            int maxFilas = Math.Min(dt.Rows.Count, 20);
+            for (int i = 0; i < maxFilas; i++)
+            {
+                var row = dt.Rows[i];
+                var rowValues = new List<string>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    string val = row[col]?.ToString() ?? "";
+                    rowValues.Add(val.PadRight(25));
+                }
+                lines.Add(string.Join(" ", rowValues));
+            }
+            if (dt.Rows.Count > maxFilas)
+                lines.Add($"... y {dt.Rows.Count - maxFilas} filas más.");
+
+            return string.Join("\n", lines);
+        }
+
         private async void OnGeneratePdfClick(object? sender, RoutedEventArgs e)
         {
-            
             try
             {
                 if (_reportTypeCombo == null)
@@ -115,27 +206,27 @@ namespace ProyectoFinalBD.View
                     case "Equipos más prestados":
                         titulo = "Equipos más prestados";
                         nombreArchivo = "EquiposMasPrestados.pdf";
-                        dt =  _pdfQueries.GetEquiposMasPrestados();
+                        dt = _pdfQueries.GetEquiposMasPrestados();
                         break;
                     case "Usuarios con más préstamos":
                         titulo = "Usuarios con más préstamos";
                         nombreArchivo = "UsuariosConMasPrestamos.pdf";
-                        dt =  _pdfQueries.GetUsuariosConMasPrestamos();
+                        dt = _pdfQueries.GetUsuariosConMasPrestamos();
                         break;
                     case "Reporte de equipos en reparación":
                         titulo = "Equipos en reparación";
                         nombreArchivo = "EquiposEnReparacion.pdf";
-                        dt =  _pdfQueries.GetEquiposEnReparacion();
+                        dt = _pdfQueries.GetEquiposEnReparacion();
                         break;
                     case "Préstamos activos por tipo de equipo":
                         titulo = "Préstamos activos por tipo de equipo";
                         nombreArchivo = "PrestamosActivosPorTipo.pdf";
-                        dt =  _pdfQueries.GetPrestamosActivosPorTipoEquipo();
+                        dt = _pdfQueries.GetPrestamosActivosPorTipoEquipo();
                         break;
                     case "Estadísticas de mantenimiento de equipos":
                         titulo = "Estadísticas de mantenimiento de equipos";
                         nombreArchivo = "EstadisticasMantenimiento.pdf";
-                        dt =  _pdfQueries.GetEstadisticasMantenimiento();
+                        dt = _pdfQueries.GetEstadisticasMantenimiento();
                         break;
                     default:
                         await ShowMessage("Aviso", "Seleccione un reporte válido.");
@@ -176,7 +267,10 @@ namespace ProyectoFinalBD.View
                     Children =
                     {
                         new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
-                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+                        new Button
+                        {
+                            Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+                        }
                     }
                 },
                 Width = 350,
@@ -198,8 +292,15 @@ namespace ProyectoFinalBD.View
                     Margin = new Thickness(10),
                     Children =
                     {
-                        new TextBlock { Text = message, Foreground = new SolidColorBrush(Colors.Red), TextWrapping = TextWrapping.Wrap },
-                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+                        new TextBlock
+                        {
+                            Text = message, Foreground = new SolidColorBrush(Colors.Red),
+                            TextWrapping = TextWrapping.Wrap
+                        },
+                        new Button
+                        {
+                            Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+                        }
                     }
                 },
                 Width = 350,

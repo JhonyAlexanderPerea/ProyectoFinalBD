@@ -86,4 +86,112 @@ public class PDFQueries
                 GROUP BY E.NOMBREEQUIPO";
             return ExecuteQuery(query);
         }
+        
+        public DataTable GetEquiposConMasFallasPorTipo()
+        {
+            string query = @"
+        SELECT 
+            te.nombreTipoEquipo,
+            COUNT(d.codigoDanio) AS totalDanios
+        FROM 
+            TipoEquipo te
+        JOIN 
+            Equipo e ON te.codigoTipoEquipo = e.tipoEquipo
+        JOIN 
+            Danio d ON e.codigoEquipo = d.equipo
+        GROUP BY 
+            te.nombreTipoEquipo
+        ORDER BY 
+            totalDanios DESC";
+
+            return ExecuteQuery(query);
+        }
+        
+        public DataTable GetCostosMantenimientoPorProveedor()
+        {
+            string query = @"
+        SELECT 
+            p.nombreProveedor,
+            SUM(m.costoMantenimiento) AS totalGastoMantenimiento
+        FROM 
+            Proveedor p
+        JOIN 
+            Equipo e ON p.codigoProveedor = e.proveedor
+        JOIN 
+            Mantenimiento m ON e.codigoEquipo = m.equipo
+        GROUP BY 
+            p.nombreProveedor
+        ORDER BY 
+            totalGastoMantenimiento DESC";
+
+            return ExecuteQuery(query);
+        }
+        
+        public DataTable GetEquiposFueraDePlazo()
+        {
+            string query = @"
+        SELECT 
+            u.nombreUser,
+            e.nombreEquipo,
+            pr.fechaPrestamo,
+            pr.fechaLimitePrestamo,
+            d.fechaDevolution
+        FROM 
+            Prestamo pr
+        JOIN 
+            Devolucion d ON pr.codigoPrestamo = d.prestamo
+        JOIN 
+            Usuario u ON pr.usuario = u.codigoUser
+        JOIN 
+            Equipo e ON pr.equipo = e.codigoEquipo
+        WHERE 
+            d.fechaDevolution > pr.fechaLimitePrestamo";
+
+            return ExecuteQuery(query);
+        }
+
+        public DataTable GetEquiposPorMunicipioYTipo()
+        {
+            string query = @"
+        SELECT 
+            m.nombreMunicipio,
+            te.nombreTipoEquipo,
+            COUNT(e.codigoEquipo) AS totalEquipos
+        FROM 
+            Equipo e
+        JOIN 
+            TipoEquipo te ON e.tipoEquipo = te.codigoTipoEquipo
+        JOIN 
+            Proveedor p ON e.proveedor = p.codigoProveedor
+        JOIN 
+            Municipio m ON p.municipio = m.codigoMunicipio
+        GROUP BY 
+            m.nombreMunicipio, te.nombreTipoEquipo
+        ORDER BY 
+            m.nombreMunicipio, totalEquipos DESC";
+
+            return ExecuteQuery(query);
+        }
+
+        public DataTable GetAccesosPorRol()
+        {
+            string query = @"
+        SELECT 
+            ru.nombreRolUsuario,
+            COUNT(lu.codigoLogUser) AS totalAccesos
+        FROM 
+            LogUsuario lu
+        JOIN 
+            Usuario u ON lu.usuario = u.codigoUser
+        JOIN 
+            RolUsuario ru ON u.rolUsuario = ru.codigoRolUsuario
+        GROUP BY 
+            ru.nombreRolUsuario
+        ORDER BY 
+            totalAccesos DESC";
+
+            return ExecuteQuery(query);
+        }
+
+
     }
