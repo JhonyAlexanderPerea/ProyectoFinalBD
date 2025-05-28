@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,7 +13,7 @@ using Calendar = Avalonia.Controls.Calendar;
 
 namespace ProyectoFinalBD
 {
-    public partial class MainMenu : Window
+    public partial class MainUserView : Window
     {
         private UserController _userController;
         private UserLogController _userLogController;
@@ -21,7 +21,7 @@ namespace ProyectoFinalBD
         private UserLog userLog;
         private UserActionLogger userActionLogger;
 
-        public MainMenu()
+        public MainUserView()
         {
             _userController = new UserController();
             _userLogController = new UserLogController();
@@ -35,7 +35,7 @@ namespace ProyectoFinalBD
 
         private  void OpenViewEntidades(object? sender, RoutedEventArgs e)
         {
-            ContentArea.Content = new Entities(userId);
+            ContentArea.Content = new EntitiesUserView(userId);
             
         }
 
@@ -147,7 +147,7 @@ namespace ProyectoFinalBD
             }
               
         }
-        
+
         private void OpenViewLogin(object? sender, RoutedEventArgs e)
         {
             _userController.Logout(); // Desloguea el usuario

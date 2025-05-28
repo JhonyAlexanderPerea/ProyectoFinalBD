@@ -1,6 +1,6 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="ProyectoFinalBD.MainMenu"
+        x:Class="ProyectoFinalBD.MainUserView"
         Width="800"
         Height="500"
         Title="Menú Principal"
@@ -21,7 +21,7 @@
                     <Button Content="Transacciones" Click="OpenViewTransacciones" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
                     <Button Content="Reportes/Consultas" Click="OpenViewReportes" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
                     <Button Content="Utilidades" Click="OpenViewUtilidades" Background="Sienna" Foreground="AliceBlue" CornerRadius="8" />
-                   </StackPanel>
+                </StackPanel>
 
                 <Button Content="Cerrar sesión"
                         Click="OpenViewLogin"
