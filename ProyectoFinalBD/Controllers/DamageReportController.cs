@@ -43,4 +43,22 @@ public class DamageReportController
         } 
         ;
     }
+
+    public async Task<DamageReport> GetReportById(string entityId)
+    {
+        return await _repository.GetById(entityId);
+    }
+
+    public async Task UpdateReport(DamageReport damageReport)
+    {
+        try
+        {
+            await _repository.Update(damageReport);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR EL REPORTE DE DAÑO: ERROR -> {e}");
+            throw;
+        }
+    }
 }

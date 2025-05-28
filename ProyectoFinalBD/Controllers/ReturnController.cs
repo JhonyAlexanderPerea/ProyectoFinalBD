@@ -45,5 +45,23 @@ namespace ProyectoFinalBD.Controllers
             } 
             ;  
         }
+
+        public async Task <Return> GetReturnById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateReturn(Return @return)
+        {
+            try
+            {
+                await _repository.Update(@return);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR LA DEVOLUCIÓN: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

@@ -54,7 +54,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
     {
         InitializeComponent();
         AddCommand = ReactiveCommand.Create(AddItem);
-        EditCommand = ReactiveCommand.Create(EditItem);
+        AddCommand = ReactiveCommand.Create(EditItem);
 
     
         CreateCommand = ReactiveCommand.CreateFromTask<string>(CreateEntityAsync);
@@ -101,12 +101,109 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         
         Console.WriteLine("Agregar ítem");
     }
-    public async Task create(string entityType)
+    public async Task Create(string entityType)
     {
         var crudWindow = new CreateEntityWindow();
         crudWindow.SetEntityType(entityType);
         await crudWindow.ShowDialog(GetWindow());
+        await CargarTodosLosDatos();
+
     }
+    public async void EditItem()
+    {
+    try
+    {
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            if (SelectedItem == null)
+            {
+                await ShowError("Error", "Por favor seleccione un elemento para editar");
+                return;
+            }
+
+            // Obtener el ID y tipo de entidad según el ítem seleccionado
+            string entityId;
+            string entityType;
+
+            if (SelectedItem is DamageReport damageReport)
+            {
+                entityId = damageReport.DamageReportId;
+                entityType = "DamageReport";
+            }
+            else if (SelectedItem is Equipment equipment)
+            {
+                entityId = equipment.EquipmentId;
+                entityType = "Equipment";
+            }
+            else if (SelectedItem is EquipmentStatus equipmentStatus)
+            {
+                entityId = equipmentStatus.EquipmentStatusId;
+                entityType = "EquipmentStatus";
+            }
+            else if (SelectedItem is EquipmentType equipmentType)
+            {
+                entityId = equipmentType.EquipmentTypeId;
+                entityType = "EquipmentType";
+            }
+            else if (SelectedItem is Loan loan)
+            {
+                entityId = loan.LoanId;
+                entityType = "Loan";
+            }
+            else if (SelectedItem is Location location)
+            {
+                entityId = location.LocationId;
+                entityType = "Location";
+            }
+            else if (SelectedItem is Maintenance maintenance)
+            {
+                entityId = maintenance.MaintenanceId;
+                entityType = "Maintenance";
+            }
+            else if (SelectedItem is Municipality municipality)
+            {
+                entityId = municipality.MunicipalityId;
+                entityType = "Municipality";
+            }
+            else if (SelectedItem is Return return_)
+            {
+                entityId = return_.ReturnId;
+                entityType = "Return";
+            }
+            else if (SelectedItem is Supplier supplier)
+            {
+                entityId = supplier.SupplierId;
+                entityType = "Supplier";
+            }
+            else if (SelectedItem is User user)
+            {
+                entityId = user.UserId;
+                entityType = "User";
+            }
+            else if (SelectedItem is UserLog userLog)
+            {
+                entityId = userLog.UserLogId;
+                entityType = "UserLog";
+            }
+            else
+            {
+                await ShowError("Error", "Tipo de entidad no reconocido");
+                return;
+            }
+
+            var editWindow = new EditEntityWindow(entityType, entityId);
+            await editWindow.ShowDialog(GetWindow());
+            
+            // Recargar los datos después de editar
+            await CargarTodosLosDatos();
+        });
+    }
+    catch (Exception ex)
+    {
+        await ShowError("Error", $"Error al abrir la ventana de edición: {ex.Message}");
+    }
+}
+    
 
     private async Task CreateEntityAsync(string entityType)
     {
@@ -116,11 +213,7 @@ public partial class Entities : UserControl, INotifyPropertyChanged, IReactiveOb
         // Asume que GetWindow() obtiene la ventana actual de forma segura
         await crudWindow.ShowDialog(GetWindow()); 
     }
-    private void EditItem()
-    {
-        Console.WriteLine("Editar ítem");
-    }
-    
+
     
     public async Task DeleteItem(string entityType)
     {

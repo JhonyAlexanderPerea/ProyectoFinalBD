@@ -28,8 +28,9 @@
                         <Button Content="Nuevo" 
                                 Background="Green" 
                                 Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Maintenance"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Maintenance"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" 
+                                Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Maintenance"/>
@@ -88,8 +89,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="EquipmentType"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="EquipmentType"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="EquipmentType"/>
@@ -142,8 +143,10 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Location"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Location"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" 
+                                Command="{Binding EditItem}" 
+                                CommandParameter="Location"/>
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Location"/>
@@ -193,8 +196,8 @@
                 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="EquipmentStatus"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="EquipmentStatus"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="EquipmentStatus"/>
@@ -243,8 +246,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="DamageReport"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="DamageReport"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="DamageReport"/>
@@ -302,8 +305,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Equipment"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Equipment"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Equipment"/>
@@ -367,9 +370,9 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Supplier"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                                Command="{Binding Create}" CommandParameter="Supplier"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
 
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Supplier"/>
@@ -430,8 +433,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="User"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="User"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="User"/>
@@ -489,8 +492,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Municipality"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Municipality"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Municipality"/>
@@ -542,8 +545,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Return"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Return"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Return"/>
@@ -601,8 +604,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="Loan"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="Loan"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="Loan"/>
@@ -664,8 +667,8 @@
 
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="10">
                         <Button Content="Nuevo" Background="Green" Foreground="White" 
-                                Command="{Binding create}" CommandParameter="UserLog"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
-                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditCommand}" />
+                                Command="{Binding Create}" CommandParameter="UserLog"/>                        <DataGrid ItemsSource="{Binding Mantenimientos}"/>
+                        <Button Content="Editar" Background="Orange" Foreground="White" Command="{Binding EditItem}" />
                         <Button Content="Eliminar" Background="Red" Foreground="White"
                                 Command="{Binding DeleteItem}" 
                                 CommandParameter="UserLog"/>

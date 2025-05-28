@@ -44,5 +44,23 @@ namespace ProyectoFinalBD.Controllers
             } 
             ;
         }
+
+        public async Task <Supplier> GetSupplierById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateSupplier(Supplier supplier)
+        {
+            try
+            {
+                await _repository.Update(supplier);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR EL PROVEEDOR: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

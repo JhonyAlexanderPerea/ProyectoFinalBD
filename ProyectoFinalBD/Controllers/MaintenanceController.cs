@@ -58,5 +58,24 @@ namespace ProyectoFinalBD.Controllers
                 
             }
         }
+
+        public async Task <Maintenance> GetMaintenanceById(string entityId)
+        {
+            
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateMaintenance(Maintenance maintenance)
+        {
+            try
+            {
+                await _repository.Update(maintenance);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR AL INTENTAR ACTUALIZAR EL MANTENIMIENTO: ERROR ->" + e );
+                throw;
+            }
+        }
     }
 }

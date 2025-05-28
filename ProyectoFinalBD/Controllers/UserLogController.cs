@@ -44,5 +44,24 @@ namespace ProyectoFinalBD.Controllers
             } 
             ;  
         }
+
+        public async Task <UserLog> GetUserLogById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateUserLog(UserLog userLog)
+        {
+            try
+            {
+                await _repository.Update(userLog);
+                Console.WriteLine("LOG DE USUARIO ACTUALIZADO CON EXITO");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL TRATAR DE ACTUALIZAR EL LOG DE USUARIO: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

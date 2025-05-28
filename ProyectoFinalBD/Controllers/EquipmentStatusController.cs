@@ -27,5 +27,23 @@ namespace ProyectoFinalBD.Controllers
             await _repository.Create(equipmentStatus);
 
         }
+
+        public async Task <EquipmentStatus>GetEquipmentStatusById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateEquipmentStatus(EquipmentStatus status)
+        {
+            try
+            {
+                await _repository.Update(status);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR UN ESTADO DE EQUIPO: ERROR -> {e}" );
+                throw;
+            }
+        }
     }
 }

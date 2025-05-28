@@ -44,5 +44,23 @@ namespace ProyectoFinalBD.Controllers
             } 
             ;
         }
+
+        public async Task <Location> GetLocationById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateLocation(Location location)
+        {
+            try
+            {
+                await _repository.Update(location);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR AL INTENTAR ACTUALIZAR LA UBICACIÓN : ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

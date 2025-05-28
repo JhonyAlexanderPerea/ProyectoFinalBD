@@ -46,5 +46,23 @@ namespace ProyectoFinalBD.Controllers
                 
             }
         }
+
+        public async Task <EquipmentType>GetEquipmentTypeById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateEquipmentType(EquipmentType type)
+        {
+            try
+            {
+                await _repository.Update(type);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR UN TIPO DE EQUIPO: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

@@ -155,16 +155,16 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE Devolucion 
-                SET fechaDevolution = :date,
-                    observacionesDevolution = :notes,
-                    pagoMulta = :penaltyPaid
-                WHERE codigoDevolution = :returnId";
-
+                SET fechaDevolution = :FechaDevolucion,
+                    observacionesDevolution = :Observaciones,
+                    pagoMulta = :PagoMulta
+                WHERE codigoDevolution = :CodigoDevolucion";
+          
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("date", OracleDbType.Date).Value = returnObj.Date;
-            command.Parameters.Add("notes", OracleDbType.Clob).Value = (object?)returnObj.Notes ?? DBNull.Value;
-            command.Parameters.Add("penaltyPaid", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
-            command.Parameters.Add("returnId", OracleDbType.Varchar2).Value = returnObj.ReturnId;
+            command.Parameters.Add("FechaDevolucion", OracleDbType.Date).Value = returnObj.Date;
+            command.Parameters.Add("Observaciones", OracleDbType.Clob).Value = (object?)returnObj.Notes ?? DBNull.Value;
+            command.Parameters.Add("PagoMulta", OracleDbType.Decimal).Value = returnObj.PenaltyPaid ?? (object)DBNull.Value;
+            command.Parameters.Add("PagoMulta", OracleDbType.Varchar2).Value = returnObj.ReturnId;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();

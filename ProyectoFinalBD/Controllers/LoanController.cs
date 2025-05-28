@@ -45,5 +45,23 @@ namespace ProyectoFinalBD.Controllers
             } 
             ;  
         }
+
+        public async Task <Loan> GetLoanById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateLoan(Loan loan)
+        {
+            try
+            {
+                await _repository.Update(loan);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR UN PRESTAMO: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

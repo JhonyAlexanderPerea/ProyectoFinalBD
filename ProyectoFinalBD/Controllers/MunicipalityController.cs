@@ -44,5 +44,23 @@ namespace ProyectoFinalBD.Controllers
                 Console.ResetColor();               
             } 
             ;        }
+
+        public async Task <Municipality> GetMunicipalityById(string entityId)
+        {
+            return await _repository.GetById(entityId);
+        }
+
+        public async Task UpdateMunicipality(Municipality municipality)
+        {
+            try
+            {
+                await _repository.Update(municipality);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR EL MUNICIPIO: ERROR -> {e}");
+                throw;
+            }
+        }
     }
 }

@@ -123,11 +123,34 @@ namespace ProyectoFinalBD.DAO
                 Date = Convert.ToDateTime(reader["fecha"]),
                 Entry = reader["registro"].ToString()!, // Changed to match column name
                 UserId = reader["usuario"]?.ToString(), // Changed to match column name
-                User = reader["usuario"] != DBNull.Value ? new User 
-                { 
-                    Name = reader["user_name"].ToString()! 
-                } : null
+                User = reader["usuario"] != DBNull.Value
+                    ? new User
+                    {
+                        Name = reader["user_name"].ToString()!
+                    }
+                    : null
             };
+        }
+
+        public async Task Update(UserLog userLog)
+        {
+            using var connection = new OracleConnection(_connectionString);
+            const string query = @"
+        UPDATE LogUsuario
+        SET 
+            fecha = :date,
+            registro = :entry,
+            usuario = :userId
+        WHERE codigoLogUser = :userLogId";
+
+            using var command = new OracleCommand(query, connection);
+            command.Parameters.Add("date", OracleDbType.Date).Value = userLog.Date;
+            command.Parameters.Add("entry", OracleDbType.Clob).Value = userLog.Entry;
+            command.Parameters.Add("userId", OracleDbType.Varchar2).Value = userLog.UserId ?? (object)DBNull.Value;
+            command.Parameters.Add("userLogId", OracleDbType.Varchar2).Value = userLog.UserLogId;
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

@@ -134,7 +134,8 @@ namespace ProyectoFinalBD.View
                 _formPanel.Children.Clear();
                 var selectedEntity = _entitySelector.SelectedItem?.ToString();
                 if (string.IsNullOrEmpty(selectedEntity)) return;
-
+                
+                _entitySelector.IsEnabled = false;
                 var fields = GetEntityFields(selectedEntity);
                 var textBoxes = new List<TextBox>();
 
@@ -158,7 +159,7 @@ namespace ProyectoFinalBD.View
 
                     if (field.Type == typeof(DateTime))
                     {
-                        textBox.Watermark = "YYYY-MM-DD";
+                        textBox.Watermark = "DD-MM-YYYY";
                     }
                     else if (field.Type == typeof(decimal))
                     {
@@ -205,8 +206,9 @@ namespace ProyectoFinalBD.View
                 Close();
             }
             catch (Exception ex)
-            {
+            {   _entitySelector.IsEnabled = true;
                 await ShowError("Error", $"Error al crear la entidad: {ex.Message}");
+                return;
             }
         }
 
@@ -246,6 +248,7 @@ namespace ProyectoFinalBD.View
         public void SetEntityType(string entityName)
         {
             _entitySelector.SelectedItem = entityName;
+            
         }
 
         
@@ -757,6 +760,7 @@ namespace ProyectoFinalBD.View
                     {
                         await _damageReportController.CreateReport(damageReport);
                         await ShowMessage("Éxito", "El reporte de daño se ha creado correctamente.");
+                        
                     }
                     catch (OracleException ex)
                     {

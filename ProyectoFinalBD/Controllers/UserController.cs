@@ -70,4 +70,23 @@ public class UserController
         } 
         ;
     }
+
+    public async Task <User> GetUserById(string entityId)
+    {
+        return await _repository.GetUserById(entityId);
+    }
+
+    public async Task UpdateUser(User user)
+    {
+        try
+        {
+            await _repository.Update(user);
+            Console.WriteLine("USUARIO ACTUALIZADO CORRECTAMENTE");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"ERROR AL INTENTAR ACTUALIZAR EL USUARIO: ERROR ->{e}");
+            throw;
+        }
+    }
 }

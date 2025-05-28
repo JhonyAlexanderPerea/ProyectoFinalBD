@@ -142,20 +142,20 @@ namespace ProyectoFinalBD.DAO
             using var connection = new OracleConnection(_connectionString);
             const string query = @"
                 UPDATE MANTENIMIENTO 
-                SET FECHAMANTENIMIENTO = :date,
-                    HALLAZGOSMANTENIMIENTO = :findings,
-                    COSTOMANTENIMIENTO = :cost,
-                    EQUIPO = :equipmentId
-                WHERE CODIGOMANTENIMIENTO = :maintenanceId";
+                SET FECHAMANTENIMIENTO = :FechaMantenimiento,
+                    HALLAZGOSMANTENIMIENTO = :Hallazgos,
+                    COSTOMANTENIMIENTO = :Costo,
+                    EQUIPO = :Equipo
+                WHERE CODIGOMANTENIMIENTO = :CodigoMantenimiento";
 
             using var command = new OracleCommand(query, connection);
-            command.Parameters.Add("date", OracleDbType.Date).Value = maintenance.Date;
-            command.Parameters.Add("findings", OracleDbType.Varchar2).Value = 
+            command.Parameters.Add("FechaMantenimiento", OracleDbType.Date).Value = maintenance.Date;
+            command.Parameters.Add("Hallazgos", OracleDbType.Varchar2).Value = 
                 maintenance.Findings ?? (object)DBNull.Value;
-            command.Parameters.Add("cost", OracleDbType.Decimal).Value = maintenance.Cost;
-            command.Parameters.Add("equipmentId", OracleDbType.Varchar2).Value = 
+            command.Parameters.Add("Costo", OracleDbType.Decimal).Value = maintenance.Cost;
+            command.Parameters.Add("Equipo", OracleDbType.Varchar2).Value = 
                 maintenance.EquipmentId ?? (object)DBNull.Value;
-            command.Parameters.Add("maintenanceId", OracleDbType.Varchar2).Value = maintenance.MaintenanceId;
+            command.Parameters.Add("CodigoMantenimiento", OracleDbType.Varchar2).Value = maintenance.MaintenanceId;
 
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
