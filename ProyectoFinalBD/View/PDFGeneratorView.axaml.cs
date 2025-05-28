@@ -21,16 +21,17 @@ namespace ProyectoFinalBD.View
         private Button? _generatePdfButton;
         private TextBlock? _previewText;
 
-        // Nuevos botones para consultas sin PDF
-        private Button? _btnEquiposMasFallas;
+        // Botones para consultas nuevas
+        private Button? _btnEquiposFallas;
         private Button? _btnCostosMantenimiento;
-        private Button? _btnPrestamosFueraPlazo;
+        private Button? _btnEquiposFueraPlazo;
         private Button? _btnEquiposPorMunicipio;
-        private Button? _btnRegistroAccesos;
+        private Button? _btnAccesosPorRol;
 
         public PDFGeneratorView()
         {
             InitializeComponent();
+
             QuestPDF.Settings.License = LicenseType.Community;
             _pdfQueries = new PDFQueries();
 
@@ -38,11 +39,12 @@ namespace ProyectoFinalBD.View
             _generatePdfButton = this.FindControl<Button>("GeneratePdfButton");
             _previewText = this.FindControl<TextBlock>("PreviewText");
 
-            _btnEquiposMasFallas = this.FindControl<Button>("BtnEquiposMasFallas");
+            // Buscar botones nuevas consultas
+            _btnEquiposFallas = this.FindControl<Button>("BtnEquiposFallas");
             _btnCostosMantenimiento = this.FindControl<Button>("BtnCostosMantenimiento");
-            _btnPrestamosFueraPlazo = this.FindControl<Button>("BtnPrestamosFueraPlazo");
+            _btnEquiposFueraPlazo = this.FindControl<Button>("BtnEquiposFueraPlazo");
             _btnEquiposPorMunicipio = this.FindControl<Button>("BtnEquiposPorMunicipio");
-            _btnRegistroAccesos = this.FindControl<Button>("BtnRegistroAccesos");
+            _btnAccesosPorRol = this.FindControl<Button>("BtnAccesosPorRol");
 
             if (_reportTypeCombo != null && _generatePdfButton != null)
             {
@@ -51,21 +53,21 @@ namespace ProyectoFinalBD.View
                 _generatePdfButton.IsEnabled = false;
             }
 
-            // Eventos para los nuevos botones (solo vista previa)
-            if (_btnEquiposMasFallas != null)
-                _btnEquiposMasFallas.Click += async (_, __) => await ShowPreviewNoPdfAsync("Equipos con más fallas");
+            // Asignar eventos a botones nuevas consultas
+            if (_btnEquiposFallas != null)
+                _btnEquiposFallas.Click += async (_, _) => await EjecutarConsultaNuevaAsync(_pdfQueries.GetEquiposConMasFallasPorTipo);
 
             if (_btnCostosMantenimiento != null)
-                _btnCostosMantenimiento.Click += async (_, __) => await ShowPreviewNoPdfAsync("Costos totales en mantenimiento");
+                _btnCostosMantenimiento.Click += async (_, _) => await EjecutarConsultaNuevaAsync(_pdfQueries.GetCostosMantenimientoPorProveedor);
 
-            if (_btnPrestamosFueraPlazo != null)
-                _btnPrestamosFueraPlazo.Click += async (_, __) => await ShowPreviewNoPdfAsync("Equipos prestados fuera del plazo");
+            if (_btnEquiposFueraPlazo != null)
+                _btnEquiposFueraPlazo.Click += async (_, _) => await EjecutarConsultaNuevaAsync(_pdfQueries.GetEquiposFueraDePlazo);
 
             if (_btnEquiposPorMunicipio != null)
-                _btnEquiposPorMunicipio.Click += async (_, __) => await ShowPreviewNoPdfAsync("Número de equipos por municipio");
+                _btnEquiposPorMunicipio.Click += async (_, _) => await EjecutarConsultaNuevaAsync(_pdfQueries.GetEquiposPorMunicipioYTipo);
 
-            if (_btnRegistroAccesos != null)
-                _btnRegistroAccesos.Click += async (_, __) => await ShowPreviewNoPdfAsync("Registro de accesos por rol");
+            if (_btnAccesosPorRol != null)
+                _btnAccesosPorRol.Click += async (_, _) => await EjecutarConsultaNuevaAsync(_pdfQueries.GetAccesosPorRol);
         }
 
         private void InitializeComponent()
@@ -78,26 +80,32 @@ namespace ProyectoFinalBD.View
             if (_generatePdfButton != null && _reportTypeCombo != null)
             {
                 _generatePdfButton.IsEnabled = _reportTypeCombo.SelectedItem != null;
+
                 if (_reportTypeCombo.SelectedItem != null)
                 {
+                    // Actualiza la vista previa sólo para reportes antiguos (ComboBox)
                     _ = UpdatePreviewAsync();
+                }
+                else
+                {
+                    if (_previewText != null)
+                        _previewText.Text = "";
                 }
             }
         }
 
-        // Vista previa para consultas PDF
         private async Task UpdatePreviewAsync()
         {
+            if (_reportTypeCombo == null || _previewText == null)
+                return;
+
             try
             {
-                if (_reportTypeCombo == null || _previewText == null)
-                    return;
-
                 var selectedReport = ((_reportTypeCombo.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
 
                 _previewText.Text = "Cargando vista previa...";
 
-                DataTable dt = selectedReport switch
+                DataTable? dt = selectedReport switch
                 {
                     "Equipos más prestados" => _pdfQueries.GetEquiposMasPrestados(),
                     "Usuarios con más préstamos" => _pdfQueries.GetUsuariosConMasPrestamos(),
@@ -113,34 +121,51 @@ namespace ProyectoFinalBD.View
                     return;
                 }
 
-                _previewText.Text = DataTableToString(dt);
+                _previewText.Text = ConstruirVistaPrevia(dt);
             }
             catch (Exception ex)
             {
-                if (_previewText != null)
-                    _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
+                _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
             }
         }
 
-        // Vista previa para consultas sin PDF
-        private async Task ShowPreviewNoPdfAsync(string consulta)
+        // Método común para mostrar vista previa (primeras filas y columnas)
+        private string ConstruirVistaPrevia(DataTable dt)
         {
+            var previewText = $"Vista previa ({dt.Rows.Count} filas, {dt.Columns.Count} columnas):\n";
+
+            int maxRows = Math.Min(5, dt.Rows.Count);
+            int maxCols = Math.Min(5, dt.Columns.Count);
+
+            // Encabezados
+            for (int c = 0; c < maxCols; c++)
+                previewText += dt.Columns[c].ColumnName + "\t";
+            previewText += "\n";
+
+            // Datos
+            for (int r = 0; r < maxRows; r++)
+            {
+                for (int c = 0; c < maxCols; c++)
+                {
+                    previewText += dt.Rows[r][c]?.ToString() + "\t";
+                }
+                previewText += "\n";
+            }
+
+            return previewText;
+        }
+
+        // Nuevo método para consultas ejecutadas solo desde botones separados
+        private async Task EjecutarConsultaNuevaAsync(Func<DataTable> consulta)
+        {
+            if (_previewText == null)
+                return;
+
             try
             {
-                if (_previewText == null)
-                    return;
-
                 _previewText.Text = "Cargando vista previa...";
 
-                DataTable dt = consulta switch
-                {
-                    "Equipos con más fallas" => _pdfQueries.GetEquiposConMasFallasPorTipo(),
-                    "Costos totales en mantenimiento" => _pdfQueries.GetCostosMantenimientoPorProveedor(),
-                    "Equipos prestados fuera del plazo" => _pdfQueries.GetEquiposFueraDePlazo(),
-                    "Número de equipos por municipio" => _pdfQueries.GetEquiposPorMunicipioYTipo(),
-                    "Registro de accesos por rol" => _pdfQueries.GetAccesosPorRol(),
-                    _ => null
-                };
+                var dt = consulta();
 
                 if (dt == null || dt.Rows.Count == 0)
                 {
@@ -148,58 +173,26 @@ namespace ProyectoFinalBD.View
                     return;
                 }
 
-                _previewText.Text = DataTableToString(dt);
+                _previewText.Text = ConstruirVistaPrevia(dt);
             }
             catch (Exception ex)
             {
-                if (_previewText != null)
-                    _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
+                _previewText.Text = $"Error al cargar la vista previa: {ex.Message}";
             }
-        }
-
-        // Método auxiliar para mostrar tabla en texto simple
-        private string DataTableToString(DataTable dt)
-        {
-            var lines = new List<string>();
-
-            // Encabezados
-            foreach (DataColumn col in dt.Columns)
-            {
-                lines.Add(col.ColumnName.PadRight(25));
-            }
-            lines.Add("\n");
-
-            // Filas (limitadas a 20 filas para no saturar)
-            int maxFilas = Math.Min(dt.Rows.Count, 20);
-            for (int i = 0; i < maxFilas; i++)
-            {
-                var row = dt.Rows[i];
-                var rowValues = new List<string>();
-                foreach (DataColumn col in dt.Columns)
-                {
-                    string val = row[col]?.ToString() ?? "";
-                    rowValues.Add(val.PadRight(25));
-                }
-                lines.Add(string.Join(" ", rowValues));
-            }
-            if (dt.Rows.Count > maxFilas)
-                lines.Add($"... y {dt.Rows.Count - maxFilas} filas más.");
-
-            return string.Join("\n", lines);
         }
 
         private async void OnGeneratePdfClick(object? sender, RoutedEventArgs e)
         {
+            if (_reportTypeCombo == null)
+                return;
+
             try
             {
-                if (_reportTypeCombo == null)
-                    return;
-
                 var selectedReport = ((_reportTypeCombo.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
 
                 string titulo = "";
                 string nombreArchivo = "";
-                DataTable dt = null;
+                DataTable? dt = null;
 
                 switch (selectedReport)
                 {
@@ -267,10 +260,7 @@ namespace ProyectoFinalBD.View
                     Children =
                     {
                         new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
-                        new Button
-                        {
-                            Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                        }
+                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
                     }
                 },
                 Width = 350,
@@ -292,15 +282,8 @@ namespace ProyectoFinalBD.View
                     Margin = new Thickness(10),
                     Children =
                     {
-                        new TextBlock
-                        {
-                            Text = message, Foreground = new SolidColorBrush(Colors.Red),
-                            TextWrapping = TextWrapping.Wrap
-                        },
-                        new Button
-                        {
-                            Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                        }
+                        new TextBlock { Text = message, Foreground = new SolidColorBrush(Colors.Red), TextWrapping = TextWrapping.Wrap },
+                        new Button { Content = "Aceptar", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
                     }
                 },
                 Width = 350,
